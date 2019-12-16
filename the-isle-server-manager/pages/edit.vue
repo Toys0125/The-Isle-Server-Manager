@@ -24,12 +24,13 @@
                 <v-layout row>
                     <v-text>Gender</v-text>
                     <v-checkbox
-                        v-model=selectedGenderCheck
-                        label="{{selectedGdender}}"
+                        v-model="selectedGenderCheck"
+                        :label="selectedGdender"
                         @change="flipGender"
                     />
                 </v-layout>
             </dir>
+        </v-container>
     </v-form>
     </dir>
 </template>
@@ -60,6 +61,9 @@ export default {
                 this.selectedGender="Female"
                 this.selectedGenderCheck=true
             }
+        },
+        GatherSteamIds(){
+            
         }
     }
 }
