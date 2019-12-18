@@ -91,6 +91,9 @@
                         />
                     </v-flex>
                 </v-row>
+                <v-row>
+                    <v-btn color="info" @click="submit" disable="valid ? '' : disabled">Submit</v-btn>
+                </v-row>
             </dir>
         </v-container>
     </v-form>
@@ -115,7 +118,8 @@ export default {
             xCords:"",
             yCords:"",
             zCords:"",
-            health:""
+            health:"",
+            valid:true
         }
     },
     mounted(){
@@ -163,9 +167,24 @@ export default {
             this.brokenlegobj.check = this.playerData.bBrokenLegs
             this.flipCheck(['Broken','Not Broken'],this.brokenlegobj)
             var cords = this.playerData.Location_Isle_V3.split(' ')
-            this.xCords = this.playerData.cords[0].split('=')[1]
-            this.yCords = this.playerData.cords[1].split('=')[1]
-            this.zCords = this.playerData.cords[2].split('=')[1]
+            this.xCords = cords[0].split('=')[1]
+            this.yCords = cords[1].split('=')[1]
+            this.zCords = cords[2].split('=')[1]
+        },
+        async submitValues(){
+            var newData = this.playerData
+            newData.CharacterClass = this.selectedDino
+            newData.bGender = this.selectedGenderCheck
+            newData.growth = this.growth
+            newData.bIsResting = this.restingobj.check
+            newData.bBrokenLegs = this.brokenlegobj.check
+            var cords = this.playerData.Location_Isle_V3.split(' ')
+            newData.Location_Isle_V3 = string(cords[0].split('=')[0] + '='+this.xCords + ' ' + cords[1].split('=')[0] + '=' + this.yCords+' '+cords[2].split('=')[0]+'='+this.zCords)
+            valid= false;
+            await axios.put(backendURL+'/steam/'+this.selectedSteam.steamid,newData).then(function(response){
+                setTimeout(2000)
+                valid = true
+            })
         }
     }
 }

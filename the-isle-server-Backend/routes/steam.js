@@ -71,17 +71,29 @@ router.get('/', async function (req,res){
     return res.status(200).send(content)   
 })
 router.get('/:steamid',async function(req,res){
-    var data = req.params.steamid
+    var steamid = req.params.steamid
     console.log(data)
     var file = {}
     try {
-        console.log(path.resolve(process.cwd(),SavePath)+'/'+data+'.json')
-        file = fs.readFileSync(path.resolve(process.cwd(),SavePath)+'/'+data+'.json')
+        console.log(path.resolve(process.cwd(),SavePath)+'/'+steamid+'.json')
+        file = fs.readFileSync(path.resolve(process.cwd(),SavePath)+'/'+steamid+'.json')
     } catch (error) {
         console.error("Reading file errored",error)
         return res.status(500).send(error)
     }
     file = JSON.parse(file)
     return res.status(200).send(file)
+})
+router.put('/:steamid',async function (req,res){
+    var data = req.body
+    console.log(data)
+    var steamid = req.params.steamid
+    try{
+    fs.writeFileSync(path.resolve(process.cwd(),SavePath)+'/'+steamid+'.json',JSON.stringify(data))
+    }catch(error){
+        console.error("Error while writing to players file "+string(steamid)+" with data of",data,error)
+        return res.status(500).send(error)
+    }
+    return res.status(200)
 })
 module.exports = router;
