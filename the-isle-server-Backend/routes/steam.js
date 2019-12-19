@@ -11,7 +11,9 @@ const path = require('path')
 app.use(bodyParser.json())
 
 router.use(function timeLog (req, res, next) {
-    console.log('Time: ', Date.now())
+    var date = new Date()
+    var formattedTimer = "["+date.getMonth()+'/'+date.getDay()+'/'+date.getFullYear()+'] ' + date.getHours()+':'+date.getMinutes()+':'+(date.getSeconds() >9?date.getSeconds():"0"+date.getSeconds())
+    console.log(formattedTimer,req.method,req.originalUrl)
     next()
   })
 
@@ -72,10 +74,9 @@ router.get('/', async function (req,res){
 })
 router.get('/:steamid',async function(req,res){
     var steamid = req.params.steamid
-    console.log(data)
     var file = {}
     try {
-        console.log(path.resolve(process.cwd(),SavePath)+'/'+steamid+'.json')
+        // console.log(path.resolve(process.cwd(),SavePath)+'/'+steamid+'.json')
         file = fs.readFileSync(path.resolve(process.cwd(),SavePath)+'/'+steamid+'.json')
     } catch (error) {
         console.error("Reading file errored",error)
