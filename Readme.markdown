@@ -1,5 +1,6 @@
 # The Isle Server Manager
 For admin owners that want easy injection or view all players in their server.
+# Do not use currently since has no anti-hack or any login features right now
 ## Features
 * Edit Player by Steamid
 * Edit Player by Steam Name
