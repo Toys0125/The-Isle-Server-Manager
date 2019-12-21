@@ -211,9 +211,9 @@ export default {
             newData.Stamina = "99999999"
             this.health != this.playerData.Health?newData.health=this.health:newData.health="99999999"
             var cords = this.playerData.Location_Isle_V3.split(' ')
-            newData.Location_Isle_V3 = string(cords[0].split('=')[0] + '='+this.xCords + ' ' + cords[1].split('=')[0] + '=' + this.yCords+' '+cords[2].split('=')[0]+'='+this.zCords)
-            valid= false;
-            await axios.put(backendURL+'/steam/'+this.selectedSteam.steamid,newData).then(function(response){
+            newData.Location_Isle_V3 = cords[0].split('=')[0] + '='+this.xCords + ' ' + cords[1].split('=')[0] + '=' + this.yCords+' '+cords[2].split('=')[0]+'='+this.zCords
+            this.valid= false;
+            await axios.put(backendURL+'/steam/id/'+this.selectedSteam.steamid,newData).then(function(response){
                 setTimeout(2000)
                 valid = true
             })
