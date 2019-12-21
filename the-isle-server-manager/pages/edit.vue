@@ -21,7 +21,11 @@
             </v-layout>
             <dir v-if="selectedSteam && playerData">
                 <v-layout row>
-
+                    <v-text-field
+                        v-model="selectedDino"
+                        label="Dino"
+                        prepend-icon="mdi-cloud"
+                    />
                 </v-layout>
                 
                 <v-layout row>
@@ -161,7 +165,11 @@ export default {
             this.selectedDino = this.playerData.CharacterClass
             this.selectedGenderCheck = this.playerData.bGender
             this.flipGender()
-            this.growth = this.playerData.growth
+            this.growth = this.playerData.Growth
+            this.health = this.playerData.health
+            if (this.playerData.BleedingRate != 0){
+                this.playerData.BleedingRate =0
+            }
             this.restingobj.check = this.playerData.bIsResting
             this.flipCheck(['Resting','Standing'],this.restingobj)
             this.brokenlegobj.check = this.playerData.bBrokenLegs
