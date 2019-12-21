@@ -96,7 +96,7 @@
                     </v-flex>
                 </v-row>
                 <v-row>
-                    <v-btn color="info" @click="submit" disable="valid ? '' : disabled">Submit</v-btn>
+                    <v-btn color="info" @click="submitValues" disable="valid ? '' : disabled">Submit</v-btn>
                 </v-row>
             </dir>
         </v-container>
