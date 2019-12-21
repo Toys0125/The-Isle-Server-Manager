@@ -61,23 +61,13 @@
         <nuxt />
       </v-container>
     </v-content>
-    <!-- <v-navigation-drawer
-      v-model="rightDrawer"
-      :right="right"
-      temporary
-      fixed
-    >
-      <v-list>
-        <v-list-item @click.native="right = !right">
-          <v-list-item-action>
-            <v-icon light>
-              mdi-repeat
-            </v-icon>
-          </v-list-item-action>
-          <v-list-item-title>Switch drawer (click me)</v-list-item-title>
-        </v-list-item>
-      </v-list>
-    </v-navigation-drawer> -->
+    <v-snackbar
+      v-model="snackBar"
+      :color="snackBarColor"
+      :ulti-line="mode === 'multi-line'"
+      :timeout="snackBarTimeout"
+      :vertical="mode === 'vertical'"
+    >{{ snackBarText }}</v-snackbar>
     <v-footer :fixed="fixed" app>
       <span>&copy; 2019 by Toys0125 (CC-BY-NC-SA-4.0)</span>
     </v-footer>
@@ -107,8 +97,34 @@ export default {
       right: true,
       rightDrawer: false,
       title: "The Isle Server Manager",
-      logedIn: false
+      logedIn: false,
+      snackBarText: "Success!",
+      snackBar: false,
+      snackBarColor: "green",
+      snackBarTimeout: 2000,
+      defaultSnackBarTimeout: 2000,
+      defaultSuccessSnackBarText: "Success!",
+      defaultSuccessSnackBarColor: "green",
+      mode: ""
     };
+  },
+  mounted(){
+    this.$root.$on("showSnackbar", snackbarOptions => {
+      this.snackBarColor =
+        snackbarOptions.color === ""
+          ? this.defaultSuccessSnackBarColor
+          : snackbarOptions.color
+      this.snackBarText =
+        snackbarOptions.text === ""
+          ? this.defaultSuccessSnackBarText
+          : snackbarOptions.text;
+      this.snackBarTimeout = parseInt(
+        snackbarOptions.timeout === "" || snackbarOptions.timeout === 0
+          ? this.defaultSnackBarTimeout
+          : snackbarOptions.timeout
+      );
+      this.snackBar = true
+  })
   }
 };
 </script>

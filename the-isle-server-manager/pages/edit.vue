@@ -152,7 +152,7 @@ export default {
         },
         async GatherPlayerdata(){
             var self = this
-            await axios.get(backendURL+'/steam/'+this.selectedSteam.steamid).then(function(response){
+            await axios.get(backendURL+'/steam/id/'+this.selectedSteam.steamid).then(function(response){
                 self.playerData = response.data
                 self.setValues()
             })

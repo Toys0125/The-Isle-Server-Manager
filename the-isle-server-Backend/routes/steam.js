@@ -72,7 +72,7 @@ router.get('/', async function (req,res){
     // console.log("Cotent outside",content)
     return res.status(200).send(content)   
 })
-router.get('/:steamid',async function(req,res){
+router.get('/id/:steamid',async function(req,res){
     var steamid = req.params.steamid
     var file = {}
     try {
@@ -87,7 +87,7 @@ router.get('/:steamid',async function(req,res){
 })
 router.put('/:steamid',async function (req,res){
     var data = req.body
-    console.log(data)
+    // console.log(data)
     var steamid = req.params.steamid
     try{
     fs.writeFileSync(path.resolve(process.cwd(),SavePath)+'/'+steamid+'.json',JSON.stringify(data))
