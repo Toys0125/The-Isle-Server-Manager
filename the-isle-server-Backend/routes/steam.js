@@ -85,7 +85,7 @@ router.get('/id/:steamid',async function(req,res){
     file = JSON.parse(file)
     return res.status(200).send(file)
 })
-router.put('/:steamid',async function (req,res){
+router.put('/id/:steamid',async function (req,res){
     var data = req.body
     // console.log(data)
     var steamid = req.params.steamid
