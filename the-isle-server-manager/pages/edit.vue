@@ -21,8 +21,11 @@
             </v-layout>
             <dir v-if="selectedSteam && playerData">
                 <v-layout row>
-                    <v-text-field
+                    <v-autocomplete
                         v-model="selectedDino"
+                        :items="dinoItems"
+                        :item-text="item => item.Dinoname"
+                        :item-value="item => item.DinoID"
                         label="Dino"
                         prepend-icon="mdi-cloud"
                     />
@@ -110,7 +113,23 @@ export default {
     data(){
         return {
             valid:false,
-            steamNames:[{steamName:"Your Mom",steamid:7618169816}],
+            steamNames:[{steamName:"Temp",steamid:7618169816}],
+            dinoItems:[{Dinoname:"Anky",DinoID:"Anky"},{Dinoname:"AnkyJuv",DinoID:"AnkyJuv"},{Dinoname:"Austro",DinoID:"Austro"},{Dinoname:"AustroJuv",DinoID:"AustroJuv"},{Dinoname:"Ava",DinoID:"Ava"}
+            ,{Dinoname:"AvaJuv",DinoID:"AvaJuv"},{Dinoname:"Camara",DinoID:"Camara"},{Dinoname:"Oro",DinoID:"Oro"},{Dinoname:"Taco",DinoID:"Taco"},{Dinoname:"Puerta",DinoID:"Puerta"},{Dinoname:"Shant",DinoID:"Shant"}
+            ,{Dinoname:"ShantJuv",DinoID:"ShantJuv"},{Dinoname:"Stego",DinoID:"Stego"},{Dinoname:"Theri",DinoID:"Theri"},{Dinoname:"TheriJuv",DinoID:"TheriJuv"},{Dinoname:"Acro",DinoID:"Acro"},{Dinoname:"Albert",DinoID:"Albert"}
+            ,{Dinoname:"Bary",DinoID:"Bary"},{Dinoname:"BaryJuv",DinoID:"BaryJuv"},{Dinoname:"Herrera",DinoID:"Herrera"},{Dinoname:"HerreraJuv",DinoID:"HerreraJuv"},{Dinoname:"Spino",DinoID:"Spino"},{Dinoname:"SpinoJuv",DinoID:"SpinoJuv"}
+            ,{Dinoname:"Velo",DinoID:"Velo"},{Dinoname:"DiabloAdult Survial",DinoID:"DiabloAdult Survial"},{Dinoname:"DiabloJuv Survial",DinoID:"DiabloJuvS"},{Dinoname:"DiabloHatch Survial",DinoID:"DiabloHatchS"},{Dinoname:"DryoAdult Survial",DinoID:"DryoAdultS"}
+            ,{Dinoname:"DryoJuv Survial",DinoID:"DryoJuvS"},{Dinoname:"DryoHatch Survial",DinoID:"DryoHatchS"},{Dinoname:"GalliAdult Survial",DinoID:"GalliAdult"},{Dinoname:"GalliJuv Survial",DinoID:"GalliJuvS"}
+            ,{Dinoname:"GalliHatch Survial",DinoID:"GalliHatchS"},{Dinoname:"MaiaAdult Survial",DinoID:"MaiaAdultS"},{Dinoname:"MaiaHatch Survial",DinoID:"MaiaHatchS"},{Dinoname:"PatchyAdult Survial",DinoID:"PatchyAdultS"},{Dinoname:"PachyHatch Survial",DinoID:"PachyHatchS"}
+            ,{Dinoname:"PachyJuv Survial",DinoID:"PachyJuvS"},{Dinoname:"ParaAdult Survial",DinoID:"ParaAdultS"},{Dinoname:"ParaJuv Survial",DinoID:"ParaJuvS"},{Dinoname:"ParaHatch Survial",DinoID:"ParaHatchS"},{Dinoname:"TrikeAdult Survial",DinoID:"TrikeAdultS"}
+            ,{Dinoname:"TrikeSub Survial",DinoID:"TrikeSubS"},{Dinoname:"TrikeJuv Survial",DinoID:"TrikeJuvS"},{Dinoname:"TrikeHatch Survial",DinoID:"TrikeHatchS"},{Dinoname:"AlloAdult Survial",DinoID:"AlloAdultS"}
+            ,{Dinoname:"AlloJuv Survial",DinoID:"AlloJuvS"},{Dinoname:"AlloHatch Survial",DinoID:"AlloHatchS"},{Dinoname:"CarnoAdult Survial",DinoID:"CarnoAdultS"},{Dinoname:"CarnoJuv Survial",DinoID:"CarnoJuvS"}
+            ,{Dinoname:"CarnoSub Survial",DinoID:"CarnoSubS"},{Dinoname:"CarnoJuv Survial",DinoID:"CarnoJuvS"},{Dinoname:"CarnoHatch Survial",DinoID:"CarnoHatchS"},{Dinoname:"CeratoAdult Survial",DinoID:"CeratoAdultS"}
+            ,{Dinoname:"CeratoJuv Survial",DinoID:"CeratoJuvS"},{Dinoname:"CeratoHatch Survial",DinoID:"CeratoHatchS"},{Dinoname:"DiloAdult Survial",DinoID:"DiloAdultS"},{Dinoname:"DiloJuv Survial",DinoID:"DiloJuvS"}
+            ,{Dinoname:"DiloHatch Survial",DinoID:"DiloHatchS"},{Dinoname:"GigaAdult Survial",DinoID:"GigaAdultS"},{Dinoname:"GigaSub Survial",DinoID:"GigaSubS"},{Dinoname:"GigaJuv Survial",DinoID:"GigaJuvS"}
+            ,{Dinoname:"GigaHatch Survial",DinoID:"GigaHatchS"},{Dinoname:"SuchoAdult Survial",DinoID:"SuchoAdult Survial"},{Dinoname:"SuchJuv Survial",DinoID:"SuchJuvS"},{Dinoname:"SuchoHatch Survial",DinoID:"SuchHatchS"}
+            ,{Dinoname:"RexAdult Survial",DinoID:"RexAdultS"},{Dinoname:"RexSub Survial",DinoID:"RexSubS"},{Dinoname:"RexJuv Survial",DinoID:"RexJuvS"},{Dinoname:"UtahAdult Survial",DinoID:"UtahAdultS"},{Dinoname:"UtahJuv Survial",DinoID:"UtahJuvS"}
+            ,{Dinoname:"UtahHatch Survial",DinoID:"UtahHatchS"}],
             selectedSteam:'',
             playerData:null,
             selectedDino:'',
@@ -160,13 +179,14 @@ export default {
                 self.playerData = response.data
                 self.setValues()
             })
+            console.log (this.playerData)
         },
         setValues(){
             this.selectedDino = this.playerData.CharacterClass
             this.selectedGenderCheck = this.playerData.bGender
             this.flipGender()
             this.growth = this.playerData.Growth
-            this.health = this.playerData.health
+            this.health = this.playerData.Health
             if (this.playerData.BleedingRate != 0){
                 this.playerData.BleedingRate =0
             }
@@ -186,6 +206,10 @@ export default {
             newData.growth = this.growth
             newData.bIsResting = this.restingobj.check
             newData.bBrokenLegs = this.brokenlegobj.check
+            newData.Hunger = "9999999"
+            newData.Thirst = "9999999"
+            newData.Stamina = "99999999"
+            this.health != this.playerData.Health?newData.health=this.health:newData.health="99999999"
             var cords = this.playerData.Location_Isle_V3.split(' ')
             newData.Location_Isle_V3 = string(cords[0].split('=')[0] + '='+this.xCords + ' ' + cords[1].split('=')[0] + '=' + this.yCords+' '+cords[2].split('=')[0]+'='+this.zCords)
             valid= false;
