@@ -22,7 +22,7 @@
             <v-list-item-title v-text="item.title" />
           </v-list-item-content>
         </v-list-item>
-        <dir v-if="!logedIn">
+        <dir v-if="isLoggedIn">
           <v-list-item
             to="/edit"
           >
@@ -31,6 +31,24 @@
             </v-list-item-action>
             <v-list-item-content>
               <v-list-item-title>Edit</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item>
+          <v-list-item-action>
+            <v-icon>mdi-exit-to-app</v-icon>
+          </v-list-item-action>
+          <v-list-content @click="logout">Logout</v-list-content>
+          </v-list-item>
+        </dir>
+        <dir v-else>
+          <v-list-item
+            to="/login"
+          >
+          <v-list-item-action>
+              <v-icon>mdi-login-variant</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>
+              <v-list-item-title>Login</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
         </dir>
@@ -75,6 +93,7 @@
 </template>
 
 <script>
+import axios from "axios"
 export default {
   data() {
     return {
@@ -108,6 +127,45 @@ export default {
       mode: ""
     };
   },
+  created(){
+    var loginkey = {}
+    try{
+    var loginkey =JSON.parse(this.$auth.$storage.getUniversal("auth"));
+    } catch(error){
+      console.log(error)
+    }
+    if (loginkey && !this.isLoggedIn()) {
+      console.log("Checking token.");
+      var self = this;
+      const values= {
+        hash: loginkey.hash,
+        username: loginkey.username
+      }
+      console.log(values)
+      axios.post(process.env.BackendURL+process.env.BackendPORT + "/login/token", values)
+        .then(function(response) {
+          console.log("Responsed with", response);
+          if (response.data.status != "delete") {
+            console.log("Username is", loginkey.username);
+            self.$auth.setUser(loginkey.username);
+          } else {
+            self.$auth.$storage.setUniversal("auth", null);
+          }
+          //Hack around auth-module redirect before I could set it.
+          if (self.$auth.$state.redirect) {
+            self.$router.push(self.$auth.$state.redirect);
+          } else self.$router.push("/");
+        })
+        .catch(function(error) {
+          console.error("Error login with token ", error);
+          self.$nuxt.$emit("showSnackbar", {
+            color: "error",
+            text: "Error! Look at console log for more.",
+            timeout: 3000
+          });
+        });
+    }
+  },
   mounted(){
     this.$root.$on("showSnackbar", snackbarOptions => {
       this.snackBarColor =
@@ -125,6 +183,26 @@ export default {
       );
       this.snackBar = true
   })
+  },
+  methods: {
+    isLoggedIn() {
+      return this.$auth.loggedIn;
+    },
+    async logout() {
+      const self = this;
+      await Axios.post(process.env.API_URL + "/login/logout", {
+        username: self.$auth.user
+      }).catch(function(error) {
+        console.error("Error updating provider " + error);
+        this.$nuxt.$emit("showSnackbar", {
+          color: "error",
+          text: "Error! Look at console log for more.",
+          timeout: 3000
+        });
+      });
+      this.$auth.logout();
+      this.$auth.$storage.setUniversal("auth", null);
+    },
   }
 };
 </script>

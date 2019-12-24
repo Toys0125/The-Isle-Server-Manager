@@ -45,6 +45,7 @@ export default {
     '@nuxtjs/axios',
     // Doc: https://github.com/nuxt-community/dotenv-module
     '@nuxtjs/dotenv',
+    '@nuxtjs/auth'
   ],
   /*
   ** Axios module configuration
@@ -53,6 +54,20 @@ export default {
   axios: {
     baseURL:process.env.BASE_URL,
     credentials:false
+  },
+  auth: {
+    strategies: {
+      local: {
+        endpoints: {
+          login: { url: process.env.BackendURL+process.env.BackendPORT+'/login', method: 'post', propertyName: false },
+          user: {url:process.env.BackendURL+process.env.BackendPORT+'/user', method:'get', propertyName:'data'},
+          logout: null
+          // logout: {url: process.env.API_URL+'/login/logout', method: 'post', propertyName:'data'}
+        },
+        tokenRequired: false,
+        fullPathRedirects: true
+      }
+    }
   },
   /*
   ** vuetify module configuration
@@ -64,7 +79,7 @@ export default {
       dark: true,
       themes: {
         dark: {
-          primary: colors.blue.darken2,
+          primary: colors.green.darken2,
           accent: colors.grey.darken3,
           secondary: colors.amber.darken3,
           info: colors.teal.lighten1,
