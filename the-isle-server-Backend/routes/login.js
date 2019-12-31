@@ -6,13 +6,13 @@ const bcrypt = require('bcrypt')
 const crypto = require('crypto');
 
 const bodyParser = require('body-parser')
-const axios = require('axios')
+//const axios = require('axios')
 const path = require('path')
 
 app.use(bodyParser.json())
-var loginDetails = None
-if(fs.exists(process.cwd()+'/login.cfg')){
-    loginDetails = JSON.parse(fs.readFileSync(process.cwd()+'/login.cfg'))
+var loginDetails = null
+if(fs.existsSync(path.resolve(process.cwd(),'./login.cfg'))){
+    loginDetails = JSON.parse(fs.readFileSync(path.resolve(process.cwd(),'./login.cfg')))
 }else{
     loginDetails = []
     var tempUser = {}
@@ -20,13 +20,18 @@ if(fs.exists(process.cwd()+'/login.cfg')){
     var tempPassword = bcrypt.hashSync("Temp",6)
     tempUser.password=tempPassword
     loginDetails.push(tempUser)
-    fs.writeFileSync(process.cwd()+'/login.cfg',JSON.stringify(loginDetails))
+    fs.writeFileSync(path.resolve(process.cwd(),'./login.cfg'),JSON.stringify(loginDetails))
 }
 async function writeLoginFile() {
-    if(fs.exists(process.cwd()+'/login.cfg')){
-        fs.writeFileSync(process.cwd()+'/login.cfg',JSON.stringify(loginDetails))
+    try{
+    if(fs.existsSync(path.resolve(process.cwd(),'./login.cfg'))){
+        fs.writeFileSync(path.resolve(process.cwd(),'./login.cfg'),JSON.stringify(loginDetails))
     }else{
         console.error("Missing login.cfg")
+        return -10
+    }
+    }catch(error){
+        console.error("Process error")
         return -10
     }
 }

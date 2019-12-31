@@ -22,7 +22,7 @@
             <v-list-item-title v-text="item.title" />
           </v-list-item-content>
         </v-list-item>
-        <dir v-if="isLoggedIn">
+        <dir v-if="isUserLoggedIn()">
           <v-list-item
             to="/edit"
           >
@@ -33,11 +33,11 @@
               <v-list-item-title>Edit</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
-          <v-list-item>
+          <v-list-item @click="logout">
           <v-list-item-action>
             <v-icon>mdi-exit-to-app</v-icon>
           </v-list-item-action>
-          <v-list-content @click="logout">Logout</v-list-content>
+          <v-list-item-content>Logout</v-list-item-content>
           </v-list-item>
         </dir>
         <dir v-else>
@@ -129,12 +129,11 @@ export default {
   },
   created(){
     var loginkey = {}
-    try{
+    if (this.$auth.$storage.getUniversal("auth")){
     var loginkey =JSON.parse(this.$auth.$storage.getUniversal("auth"));
-    } catch(error){
-      console.log(error)
     }
-    if (loginkey && !this.isLoggedIn()) {
+    
+    if (!this.isEmpty(loginkey) && !this.isLoggedIn()) {
       console.log("Checking token.");
       var self = this;
       const values= {
@@ -185,12 +184,13 @@ export default {
   })
   },
   methods: {
-    isLoggedIn() {
+    isUserLoggedIn() {
+      //console.log("Is the user logged in",this.$auth.loggedIn)
       return this.$auth.loggedIn;
     },
     async logout() {
       const self = this;
-      await Axios.post(process.env.API_URL + "/login/logout", {
+      await Axios.post(process.env.BackendURL+process.env.BackendPORT + "/login/logout", {
         username: self.$auth.user
       }).catch(function(error) {
         console.error("Error updating provider " + error);
@@ -203,6 +203,13 @@ export default {
       this.$auth.logout();
       this.$auth.$storage.setUniversal("auth", null);
     },
+    isEmpty(obj) {
+    for(var key in obj) {
+        if(obj.hasOwnProperty(key))
+            return false;
+    }
+    return true;
+}
   }
 };
 </script>

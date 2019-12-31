@@ -1,5 +1,5 @@
 import colors from 'vuetify/es5/util/colors'
-
+require('dotenv').config()
 export default {
   mode: 'universal',
   /*
@@ -30,12 +30,14 @@ export default {
   ** Plugins to load before mounting the App
   */
   plugins: [
+    //'plugins/index.js'
   ],
   /*
   ** Nuxt.js dev-modules
   */
   buildModules: [
     '@nuxtjs/vuetify',
+    '@nuxtjs/dotenv',
   ],
   /*
   ** Nuxt.js modules
@@ -44,8 +46,7 @@ export default {
     // Doc: https://axios.nuxtjs.org/usage
     '@nuxtjs/axios',
     // Doc: https://github.com/nuxt-community/dotenv-module
-    '@nuxtjs/dotenv',
-    '@nuxtjs/auth'
+    '@nuxtjs/auth',
   ],
   /*
   ** Axios module configuration
@@ -60,7 +61,7 @@ export default {
       local: {
         endpoints: {
           login: { url: process.env.BackendURL+process.env.BackendPORT+'/login', method: 'post', propertyName: false },
-          user: {url:process.env.BackendURL+process.env.BackendPORT+'/user', method:'get', propertyName:'data'},
+          user: {url: process.env.BackendURL+process.env.BackendPORT+'/user', method:'get', propertyName:'data'},
           logout: null
           // logout: {url: process.env.API_URL+'/login/logout', method: 'post', propertyName:'data'}
         },
@@ -88,6 +89,12 @@ export default {
           success: colors.green.accent3
         }
       }
+    }
+  },
+  vue: {
+    config: {
+      productionTip: false,
+      devtools: true
     }
   },
   /*

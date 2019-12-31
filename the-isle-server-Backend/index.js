@@ -7,9 +7,11 @@ app.use(cors())
 
 var steamRouter = require('./routes/steam')
 var loginRouter = require('./routes/login')
+var userRouter = require('./routes/user')
 
 app.use('/steam',steamRouter)
 app.use('/login',loginRouter)
+app.use('/user',userRouter)
 
 dotenv.config()
 fs.readFile(process.cwd()+"/config.cfg",function(err,contents){
