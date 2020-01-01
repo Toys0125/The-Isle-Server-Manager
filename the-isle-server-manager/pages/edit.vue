@@ -105,6 +105,7 @@
 <script>
 import axios from "axios";
 export default {
+  auth:true,
   data() {
     return {
       valid: false,
@@ -199,7 +200,6 @@ export default {
     };
   },
   mounted() {
-    global.backendURL = process.env.BackendURL + process.env.BackendPORT;
     this.GatherSteamIds();
   },
   methods: {
