@@ -19,17 +19,19 @@ if(fs.existsSync(path.resolve(process.cwd(),'./login.cfg'))){
     tempUser.username="Temp"
     var tempPassword = bcrypt.hashSync("Temp",6)
     tempUser.password=tempPassword
-    tempUser.scope = null
+    tempUser.scope = "Master"
     loginDetails.push(tempUser)
-    if(writeLoginFile() == -10){
-
+    if(Promise.all(writeLoginFile()) == 0){
+        console.log("Created a login.cfg that a temp user with a username: Temp\npassword: Temp")
+    } else{
+        console.error("Failed to make Temp user.")
     }
-    console.log("Created a login.cfg that a temp user with a username: Temp and password: Temp")
 }
 async function writeLoginFile() {
     try{
     if(fs.existsSync(path.resolve(process.cwd(),'./login.cfg'))){
         fs.writeFileSync(path.resolve(process.cwd(),'./login.cfg'),JSON.stringify(loginDetails))
+        return 0
     }else{
         console.error("Missing login.cfg")
         return -10
