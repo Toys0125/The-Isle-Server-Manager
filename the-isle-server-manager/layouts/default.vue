@@ -23,9 +23,7 @@
           </v-list-item-content>
         </v-list-item>
         <dir v-if="isUserLoggedIn()">
-          <v-list-item
-            to="/edit"
-          >
+          <v-list-item to="/edit">
             <v-list-item-action>
               <v-icon>mdi-fountain-pen-tip</v-icon>
             </v-list-item-action>
@@ -34,17 +32,25 @@
             </v-list-item-content>
           </v-list-item>
           <v-list-item @click="logout">
-          <v-list-item-action>
-            <v-icon>mdi-exit-to-app</v-icon>
-          </v-list-item-action>
-          <v-list-item-content>Logout</v-list-item-content>
+            <v-list-item-action>
+              <v-icon>mdi-exit-to-app</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>Logout</v-list-item-content>
           </v-list-item>
+          <dir v-if="isAdmin()">
+            <v-list-item to="/user">
+              <v-list-item-action>
+                <v-icon>mdi-login-variant</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>Users</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+          </dir>
         </dir>
         <dir v-else>
-          <v-list-item
-            to="/login"
-          >
-          <v-list-item-action>
+          <v-list-item to="/login">
+            <v-list-item-action>
               <v-icon>mdi-login-variant</v-icon>
             </v-list-item-action>
             <v-list-item-content>
@@ -85,7 +91,8 @@
       :ulti-line="mode === 'multi-line'"
       :timeout="snackBarTimeout"
       :vertical="mode === 'vertical'"
-    >{{ snackBarText }}</v-snackbar>
+      >{{ snackBarText }}</v-snackbar
+    >
     <v-footer :fixed="fixed" app>
       <span>&copy; 2019 by Toys0125 (CC-BY-NC-SA-4.0)</span>
     </v-footer>
@@ -93,7 +100,7 @@
 </template>
 
 <script>
-import axios from "axios"
+import axios from "axios";
 export default {
   data() {
     return {
@@ -127,21 +134,25 @@ export default {
       mode: ""
     };
   },
-  created(){
-    var loginkey = {}
-    if (this.$auth.$storage.getUniversal("auth")){
-    var loginkey =JSON.parse(this.$auth.$storage.getUniversal("auth"));
+  created() {
+    var loginkey = {};
+    if (this.$auth.$storage.getUniversal("auth")) {
+      var loginkey = JSON.parse(this.$auth.$storage.getUniversal("auth"));
     }
-    
+
     if (!this.isEmpty(loginkey) && !this.isLoggedIn()) {
       console.log("Checking token.");
       var self = this;
-      const values= {
+      const values = {
         hash: loginkey.hash,
         username: loginkey.username
-      }
-      console.log(values)
-      axios.post(process.env.BackendURL+process.env.BackendPORT + "/login/token", values)
+      };
+      console.log(values);
+      axios
+        .post(
+          process.env.BackendURL + process.env.BackendPORT + "/login/token",
+          values
+        )
         .then(function(response) {
           console.log("Responsed with", response);
           if (response.data.status != "delete") {
@@ -165,12 +176,12 @@ export default {
         });
     }
   },
-  mounted(){
+  mounted() {
     this.$root.$on("showSnackbar", snackbarOptions => {
       this.snackBarColor =
         snackbarOptions.color === ""
           ? this.defaultSuccessSnackBarColor
-          : snackbarOptions.color
+          : snackbarOptions.color;
       this.snackBarText =
         snackbarOptions.text === ""
           ? this.defaultSuccessSnackBarText
@@ -180,11 +191,11 @@ export default {
           ? this.defaultSnackBarTimeout
           : snackbarOptions.timeout
       );
-      this.snackBar = true
-      if (!backendURL){
+      this.snackBar = true;
+      if (!backendURL) {
         global.backendURL = process.env.BackendURL + process.env.BackendPORT;
       }
-  })
+    });
   },
   methods: {
     isUserLoggedIn() {
@@ -193,9 +204,12 @@ export default {
     },
     async logout() {
       const self = this;
-      await Axios.post(process.env.BackendURL+process.env.BackendPORT + "/login/logout", {
-        username: self.$auth.user
-      }).catch(function(error) {
+      await Axios.post(
+        process.env.BackendURL + process.env.BackendPORT + "/login/logout",
+        {
+          username: self.$auth.user
+        }
+      ).catch(function(error) {
         console.error("Error updating provider " + error);
         this.$nuxt.$emit("showSnackbar", {
           color: "error",
@@ -207,12 +221,16 @@ export default {
       this.$auth.$storage.setUniversal("auth", null);
     },
     isEmpty(obj) {
-    for(var key in obj) {
-        if(obj.hasOwnProperty(key))
-            return false;
+      for (var key in obj) {
+        if (obj.hasOwnProperty(key)) return false;
+      }
+      return true;
+    },
+    isAdmin() {
+      if (this.$auth.$storage.getUniversal("scope").includes("Management")) {
+        return true;
+      } else false;
     }
-    return true;
-}
   }
 };
 </script>

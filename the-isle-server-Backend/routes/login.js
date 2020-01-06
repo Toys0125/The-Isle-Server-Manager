@@ -41,14 +41,14 @@ async function writeLoginFile() {
         return -10
     }
 }
-async function Login(username, password){
+async function Login(username, password,res){
     var stats = {}
     for(item in loginDetails){
-        if(item.username == data.username){
-            return bcrypt.compare(data.password,item.password).then(async function(bresponse){
+        if(item.username == username){
+            return bcrypt.compare(password,item.password).then(async function(bresponse){
                 if (!bresponse){
                     stats.status = 401
-                    return stats
+                    return res.status(401).send("Incorrect username/password")
                 }
                 var hash = crypto.randomBytes(20).toString('hex')
                 item.hash = hash
@@ -68,21 +68,24 @@ async function Login(username, password){
             
         }
     }
-    stats.stats = 401
-    return stats
+    return res.status(401).send("Incorrect username/password")
 }
 router.use(function timeLog (req, res, next) {
     var date = new Date()
     var formattedTimer = "["+date.getMonth()+'/'+date.getDay()+'/'+date.getFullYear()+'] ' + date.getHours()+':'+date.getMinutes()+':'+(date.getSeconds() >9?date.getSeconds():"0"+date.getSeconds())
     console.log(formattedTimer,req.method,req.originalUrl)
-    next()
+    if (req.hostname == "localhost") {
+        next();
+      }else{
+          return res.status(403).send("Incorrect origin")
+      }
   })
 router.post('/',async function(req,res){
     var data = req.body
-    var login = Login(data.username,data.password)
-    if (login.status == 0){
-        return res;
-    }
+    return Login(data.username,data.password,res)
+})
+router.put('/user',async function(req,res){
+
 })
 router.post('/user',async function(req,res){
     var data = req.body
@@ -111,12 +114,12 @@ router.post('/verify',async function(req,res){
             if(item.hash == data.hash){
                 return res.status(200).send("Authenticated")
             } else{
-                return res.status(401).send("Incorrect")
+                return res.status(403).send("Incorrect")
             }
         }
     }
     console.error()
-    return res.status(401).send("Incorrect")
+    return res.status(403).send("Incorrect")
 })
 
 

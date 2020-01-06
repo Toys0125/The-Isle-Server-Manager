@@ -2,10 +2,17 @@
   <dir>
     <h2 class="text-center">Login</h2>
     <hr />
-    <p show v-if="$auth.$state.redirect">You have to login before accessing the Grants Database!</p>
+    <p show v-if="$auth.$state.redirect">
+      You have to login before accessing the Grants Database!
+    </p>
     <v-form ref="form" v-model="valid" lazy-validation>
       <v-row>
-        <v-text-field v-model="username" counter="20" label="Username" :rules="usernameRules"></v-text-field>
+        <v-text-field
+          v-model="username"
+          counter="20"
+          label="Username"
+          :rules="usernameRules"
+        ></v-text-field>
       </v-row>
       <v-row>
         <v-text-field
@@ -14,11 +21,16 @@
           counter="64"
           :rules="passwordRules"
           type="password"
-          @keyup.enter="proccessing == 0? login():None"
+          @keyup.enter="proccessing == 0 ? login() : None"
         ></v-text-field>
       </v-row>
       <v-row>
-        <v-btn @click="login()" color="info" :disabled="proccessing == 1 ? true : false">Login</v-btn>s
+        <v-btn
+          @click="login()"
+          color="info"
+          :disabled="proccessing == 1 ? true : false"
+          >Login</v-btn
+        >
       </v-row>
     </v-form>
   </dir>
@@ -71,9 +83,14 @@ export default {
             self.proccessing = false; //Give the user the ability to use the button
           })
           .catch(function(error) {
+            self.$nuxt.$emit("showSnackbar", {
+              color: "error",
+              text: "Error! Look at console log for more.",
+              timeout: 3000
+            });
             if (error.response) {
               if ((error.response.status = 401)) {
-                console.log(error.response.data);
+                console.error(error.response.data);
                 self.error = error.response.data;
                 setTimeout(5000);
                 self.proccessing = false;
@@ -82,13 +99,12 @@ export default {
               // The request was made but no response was received
               // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
               // http.ClientRequest in node.js
-              console.log(error.request);
+              console.error(error.request);
               self.error = "Network error request was made to the server.";
               setTimeout(5000);
               self.proccessing = false;
             } else {
-              console.log(error);
-              self.error = "Network error to the server.";
+              console.error(error);
               setTimeout(5000);
               self.proccessing = false;
             }
@@ -101,5 +117,4 @@ export default {
 };
 </script>
 
-<style>
-</style>
+<style></style>

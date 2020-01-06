@@ -83,12 +83,8 @@
             </v-flex>
           </v-row>
           <v-row>
-            <v-btn color="info"
-                @click="setValues"
-            >Reset</v-btn>
-            <v-btn color="error"
-                @click="reset"
-            >Clear</v-btn>
+            <v-btn color="info" @click="setValues">Reset</v-btn>
+            <v-btn color="error" @click="reset">Clear</v-btn>
             <v-btn
               color="info"
               @click="submitValues"
@@ -105,7 +101,7 @@
 <script>
 import axios from "axios";
 export default {
-  auth:true,
+  auth: true,
   data() {
     return {
       valid: false,
@@ -199,7 +195,7 @@ export default {
       valid: true
     };
   },
-  mounted() {
+  created() {
     this.GatherSteamIds();
   },
   methods: {
@@ -227,6 +223,11 @@ export default {
         })
         .catch(function(err) {
           console.error("GatherSteamIds errored with ", err);
+          self.$nuxt.$emit("showSnackbar", {
+            color: "error",
+            text: "Error! Look at console log for more.",
+            timeout: 3000
+          });
         });
     },
     async GatherPlayerdata() {
@@ -236,6 +237,14 @@ export default {
         .then(function(response) {
           self.playerData = response.data;
           self.setValues();
+        })
+        .catch(function(error) {
+          console.error("GatherPlayerdata", error);
+          self.$nuxt.$emit("showSnackbar", {
+            color: "error",
+            text: "Error! Look at console log for more.",
+            timeout: 3000
+          });
         });
       console.log(this.playerData);
     },
@@ -287,12 +296,24 @@ export default {
       await axios
         .put(backendURL + "/steam/id/" + this.selectedSteam.steamid, newData)
         .then(function(response) {
+          self.$nuxt.$emit("showSnackbar", {
+            color: "Success",
+            text: "Player has been updated",
+            timeout: 3000
+          });
           setTimeout(2000);
           valid = true;
+        })
+        .catch(function(error) {
+          self.$nuxt.$emit("showSnackbar", {
+            color: "error",
+            text: "Error! Look at console log for more.",
+            timeout: 3000
+          });
         });
     },
-    reset(){
-        this.$refs.form.reset()
+    reset() {
+      this.$refs.form.reset();
     }
   }
 };
