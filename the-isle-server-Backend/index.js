@@ -14,7 +14,33 @@ app.use('/login',loginRouter)
 app.use('/user',userRouter)
 
 dotenv.config()
+if (!process.env.PORT){
+    console.error("Missing PORT in .env")
+    throw "Missing PORT in .env"
+}
+if (process.env.DatabaseModes){
+    if (!process.env.DatabaseHost){
+        console.error("Missing DatabaseHost")
+        throw "Missing DatabaseHost"
+    }
+    if (!process.env.DatabaseUser){
+        console.error("Missing DatabaseHost")
+        throw "Missing DatabaseHost"
+    }
+    if (!process.env.DatabasePassword){
+        console.error("Missing DatabasePassword")
+        throw "Missing DatabasePassword"
+    }
+    if (!process.env.Database_Database){
+        console.error("Missing Database_Database")
+        throw "Missing Database_Database"
+    }
+}
 fs.readFile(process.cwd()+"/config.cfg",function(err,contents){
+    if (err){
+        console.error(err)
+        throw "Missing config.cfg"
+    }
     var loadedContents = JSON.parse(contents)
     global.SavePath = loadedContents.Path
     var path = require('path')

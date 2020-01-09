@@ -9,8 +9,24 @@ const bodyParser = require('body-parser')
 //const axios = require('axios')
 const path = require('path')
 
+var client = null
+if (process.env.DatabaseModes == 10){
+    mysql = require("mysql")
+    client = mysql.createPool({
+        connectionLimit : 10,
+        host            : process.env.DatabaseHost,
+        user            : process.env.DatabaseUser,
+        password        : process.env.DatabasePassword,
+        database        : process.env.Database_Database
+      });
+}
+if (process.env.DatabaseModes == 20){
+    postgres = require('')
+}
+
 app.use(bodyParser.json())
 var loginDetails = null
+if (!process.env.DatabaseModes){
 if (fs.existsSync(path.resolve(process.cwd(), './login.cfg'))) {
     loginDetails = JSON.parse(fs.readFileSync(path.resolve(process.cwd(), './login.cfg')))
 } else {
@@ -28,18 +44,19 @@ if (fs.existsSync(path.resolve(process.cwd(), './login.cfg'))) {
         console.error("Failed to make Temp user.")
     }
 }
+}
 async function writeLoginFile() {
     try {
         if (fs.existsSync(path.resolve(process.cwd(), './login.cfg'))) {
             fs.writeFileSync(path.resolve(process.cwd(), './login.cfg'), JSON.stringify(loginDetails))
             return 0
         } else {
-            console.error("Creating login.cfg")
+            console.info("Creating login.cfg")
             fs.writeFileSync(path.resolve(process.cwd(), './login.cfg'), JSON.stringify(loginDetails))
             return 0
         }
     } catch (error) {
-        console.error("Process error")
+        console.error("Process error", error)
         return -10
     }
 }

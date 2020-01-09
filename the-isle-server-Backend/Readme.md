@@ -4,6 +4,7 @@ Read instructions below to run and setup
 ```
 #To start run using npm
 npm install && npm run start
+Make sure you configured .env
 ```
 ## Config .env
 .env
@@ -12,6 +13,23 @@ PORT=3001
 SteamAPIKEY=xxxxxxxxxxx # https://steamcommunity.com/dev/apikey
 FrontEndHostName="localhost"
 ```
+# DataBase
+Add these into .env for database usage
+```
+DatabaseHost=""
+DatabaseUser=""
+DatabasePassword=""
+Database_Database=""
+```
+Add This to the end if you using database MySQL management NOT IMPLELEMENTED
+```
+DatabaseMode=10
+```
+Add This to the end if you using database Postgres management NOT IMPLELMENTED
+```
+DatabaseMode=20
+```
+
 ## Config of json
 Must be in json format
 ```
@@ -26,7 +44,10 @@ Must be in json format
 // https://developer.valvesoftware.com/wiki/Steam_Web_API#GetPlayerSummaries_.28v0001.29
 Get('/'){
     Send:{}
-    Returns:{[SteamData]}
+    Returns:{[{
+		steamName: <string>,
+		steamid: <int>
+	}]}
 }
 Get('/id/:steamid'){
     Send:{}
