@@ -74,7 +74,7 @@ router.use(function timeLog(req, res, next) {
       return res.status(500).send("Internal Server Error");
     }
   }
-  if (req.hostname == "localhost") {
+  if (req.hostname == process.env.FrontEndHostName?process.env.FrontEndHostName:"localhost") {
     next();
   }
 });

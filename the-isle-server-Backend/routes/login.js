@@ -11,114 +11,132 @@ const path = require('path')
 
 app.use(bodyParser.json())
 var loginDetails = null
-if(fs.existsSync(path.resolve(process.cwd(),'./login.cfg'))){
-    loginDetails = JSON.parse(fs.readFileSync(path.resolve(process.cwd(),'./login.cfg')))
-}else{
+if (fs.existsSync(path.resolve(process.cwd(), './login.cfg'))) {
+    loginDetails = JSON.parse(fs.readFileSync(path.resolve(process.cwd(), './login.cfg')))
+} else {
     loginDetails = []
     var tempUser = {}
-    tempUser.username="Temp"
-    var tempPassword = bcrypt.hashSync("Temp",6)
-    tempUser.password=tempPassword
+    tempUser.username = "Temp"
+    var tempPassword = bcrypt.hashSync("Temp", 6)
+    tempUser.password = tempPassword
     tempUser.scope = "Master"
+    tempUser.id = 0
     loginDetails.push(tempUser)
-    if(Promise.all(writeLoginFile()) == 0){
+    if (Promise.all(writeLoginFile()) == 0) {
         console.log("Created a login.cfg that a temp user with a username: Temp\npassword: Temp")
-    } else{
+    } else {
         console.error("Failed to make Temp user.")
     }
 }
 async function writeLoginFile() {
-    try{
-    if(fs.existsSync(path.resolve(process.cwd(),'./login.cfg'))){
-        fs.writeFileSync(path.resolve(process.cwd(),'./login.cfg'),JSON.stringify(loginDetails))
-        return 0
-    }else{
-        console.error("Missing login.cfg")
-        return -10
-    }
-    }catch(error){
+    try {
+        if (fs.existsSync(path.resolve(process.cwd(), './login.cfg'))) {
+            fs.writeFileSync(path.resolve(process.cwd(), './login.cfg'), JSON.stringify(loginDetails))
+            return 0
+        } else {
+            console.error("Creating login.cfg")
+            fs.writeFileSync(path.resolve(process.cwd(), './login.cfg'), JSON.stringify(loginDetails))
+            return 0
+        }
+    } catch (error) {
         console.error("Process error")
         return -10
     }
 }
-async function Login(username, password,res){
+async function Login(username, password, res) {
     var stats = {}
-    for(item in loginDetails){
-        if(item.username == username){
-            return bcrypt.compare(password,item.password).then(async function(bresponse){
-                if (!bresponse){
+    for (item in loginDetails) {
+        if (item.username == username) {
+            return bcrypt.compare(password, item.password).then(async function (bresponse) {
+                if (!bresponse) {
                     stats.status = 401
                     return res.status(401).send("Incorrect username/password")
                 }
                 var hash = crypto.randomBytes(20).toString('hex')
                 item.hash = hash
-                var time = Date.now()+3600000
+                var time = Date.now() + 3600000
                 time = new Date(time).toISOString()
                 item.time = time
 
                 stats.status = 200
                 stats.token = hash
-                if(Promise.all(writeLoginFile) != -10){
+                if (Promise.all(writeLoginFile) != -10) {
                     return res.status(200)
-                }else{
+                } else {
                     return res.status(500).send("Internal Server Error!")
                 }
-                
+
             })
-            
+
         }
     }
     return res.status(401).send("Incorrect username/password")
 }
-router.use(function timeLog (req, res, next) {
+router.use(function timeLog(req, res, next) {
     var date = new Date()
-    var formattedTimer = "["+date.getMonth()+'/'+date.getDay()+'/'+date.getFullYear()+'] ' + date.getHours()+':'+date.getMinutes()+':'+(date.getSeconds() >9?date.getSeconds():"0"+date.getSeconds())
-    console.log(formattedTimer,req.method,req.originalUrl)
-    if (req.hostname == "localhost") {
+    var formattedTimer = "[" + date.getMonth() + '/' + date.getDay() + '/' + date.getFullYear() + '] ' + date.getHours() + ':' + date.getMinutes() + ':' + (date.getSeconds() > 9 ? date.getSeconds() : "0" + date.getSeconds())
+    console.log(formattedTimer, req.method, req.originalUrl)
+    if (req.hostname == process.env.FrontEndHostName ? process.env.FrontEndHostName : "localhost") {
         next();
-      }else{
-          return res.status(403).send("Incorrect origin")
-      }
-  })
-router.post('/',async function(req,res){
+    } else {
+        return res.status(403).send("Incorrect origin")
+    }
+})
+router.post('/', async function (req, res) {
     var data = req.body
-    return Login(data.username,data.password,res)
+    return Login(data.username, data.password, res) // Response is handled in Login Function.
 })
-router.put('/user',async function(req,res){
-
+router.put('/user', async function (req, res) {
+    var data = req.body
+    for (item in loginDetails) {
+        if (item.id == data.id) {
+            if (data.username) {
+                item.username = data.username
+            }
+            if (data.password) {
+                item.password = bcrypt.hashSync(data.password, 6)
+            }
+            if (data.scope) {
+                item.scope = data.scope
+            }
+            return res.status(200)
+        }
+    } return res.status(404)
 })
-router.post('/user',async function(req,res){
+router.post('/user', async function (req, res) {
     var data = req.body
     var user = {}
     user.username = data.username
-    var tempPassword = bcrypt.hashSync(data.password,6)
-    user.password=tempPassword
+    var tempPassword = bcrypt.hashSync(data.password, 6)
+    user.password = tempPassword
     user.scope = data.scope
+    user.id = length(loginDetails) - 1
     loginDetails.push(user)
+    return res.status(200)
 })
-router.post('/verify',async function(req,res){
+router.post('/verify', async function (req, res) {
     var data = req.body
-    for (item in loginDetails){
-        if (item.username == data.username){
-            try{
-            if(Date.parse(item.time)<=new Date.now()){
-                res.json({
-                    status:"delete"
-                })
-                return res.status(200)
+    for (item in loginDetails) {
+        if (item.username == data.username) {
+            try {
+                if (Date.parse(item.time) <= new Date.now()) {
+                    res.json({
+                        status: "delete"
+                    })
+                    return res.status(200)
+                }
+            } catch (error) {
+                console.error(error)
+                return res.status(500)
             }
-        } catch(error){
-            console.error(error)
-            return res.status(500)
-        }
-            if(item.hash == data.hash){
+            if (item.hash == data.hash) {
                 return res.status(200).send("Authenticated")
-            } else{
+            } else {
                 return res.status(403).send("Incorrect")
             }
         }
     }
-    console.error()
+    console.error("No Username found", data)
     return res.status(403).send("Incorrect")
 })
 

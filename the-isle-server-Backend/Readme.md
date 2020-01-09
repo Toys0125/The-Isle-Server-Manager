@@ -9,7 +9,8 @@ npm install && npm run start
 .env
 ```
 PORT=3001
-SteamAPIKEY=xxxxxxxxxxx #https://steamcommunity.com/dev/apikey
+SteamAPIKEY=xxxxxxxxxxx # https://steamcommunity.com/dev/apikey
+FrontEndHostName="localhost"
 ```
 ## Config of json
 Must be in json format
@@ -17,5 +18,114 @@ Must be in json format
 {
     "_comment":"Path to save data if using file system based make sure not to start with /",
     "Path":"../../TheIsle/Saved/Databases/Survival/Players"
+}
+```
+## EndPoints
+# /steam
+```
+// https://developer.valvesoftware.com/wiki/Steam_Web_API#GetPlayerSummaries_.28v0001.29
+Get('/'){
+    Send:{}
+    Returns:{[SteamData]}
+}
+Get('/id/:steamid'){
+    Send:{}
+    Returns:{
+    "CharacterClass": <string>,
+	"DNA": <string>,
+	"Location_Isle_V3": "X=<float> Y=<float> Z=<float>",
+	//"Rotation_Isle_V3": "P=0.000000 Y=54.962078 R=0.000000",
+	"Growth": <float>,
+	"Hunger": <string>,
+	"Thirst": <string>,
+	"Stamina": <string>,
+	"Health": <sting>,
+	"BleedingRate": <string>,
+	"Oxygen": <sting>,
+	"bGender": <bool>,
+	"bIsResting": <bool>,
+	"bBrokenLegs": <bool>,
+	"ProgressionPoints": <string>,
+	"ProgressionTier": <string,
+	"UnlockedCharacters": <string;>,
+	//"CameraRotation_Isle_V3": "P=0.000000 Y=144.962143 R=0.000000",
+	//"CameraDistance_Isle_V3": "800.012207",
+	"SkinPaletteSection1": <int>,
+	"SkinPaletteSection2": <int>,
+	"SkinPaletteSection3": <int>,
+	"SkinPaletteSection4": <int>,
+	"SkinPaletteSection5": <int>,
+	"SkinPaletteSection6": <int>,
+	"SkinPaletteVariation": <string>
+    }
+}
+Put('/id/:steamid'){
+    Send:{
+    "CharacterClass": <string>,
+	"DNA": <string>,
+	"Location_Isle_V3": "X=<float> Y=<float> Z=<float>",
+	//"Rotation_Isle_V3": "P=0.000000 Y=54.962078 R=0.000000",
+	"Growth": <float>,
+	"Hunger": <string>,
+	"Thirst": <string>,
+	"Stamina": <string>,
+	"Health": <sting>,
+	"BleedingRate": <string>,
+	"Oxygen": <sting>,
+	"bGender": <bool>,
+	"bIsResting": <bool>,
+	"bBrokenLegs": <bool>,
+	"ProgressionPoints": <string>,
+	"ProgressionTier": <string,
+	"UnlockedCharacters": <string;>,
+	//"CameraRotation_Isle_V3": "P=0.000000 Y=144.962143 R=0.000000",
+	//"CameraDistance_Isle_V3": "800.012207",
+	"SkinPaletteSection1": <int>,
+	"SkinPaletteSection2": <int>,
+	"SkinPaletteSection3": <int>,
+	"SkinPaletteSection4": <int>,
+	"SkinPaletteSection5": <int>,
+	"SkinPaletteSection6": <int>,
+	"SkinPaletteVariation": <string>
+    }
+    Returns:{}
+}
+```
+# /login
+```
+Post('/'){
+    Send:{
+        username: <string>,
+        password: <string>
+    }
+    Returns:{}
+}
+Put('/user'){
+    Send:{
+        id: <int>
+        username: ?<string>,
+        password: ?<string>, //This is unhashed
+        scope: ?[<string>]
+    }
+    Returns:{}
+}
+Post('/user'){
+    Send:{
+        username: <string>,
+        password: <string>,
+        scope: [<string>]
+    }
+    Returns:{}
+}
+Post('/verfiy'){
+    Send:{
+        username: <string>,
+        time: <string>,
+        hash: <hex>
+    }
+    Returns:{}
+    Expired:{
+        status: "delete"
+    }
 }
 ```

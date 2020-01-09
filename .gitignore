@@ -103,3 +103,4 @@ dist
 # TernJS port file
 .tern-port
 the-isle-server-Backend/login.cfg
+the-isle-server-Backend/config.cfg
