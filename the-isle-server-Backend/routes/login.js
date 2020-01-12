@@ -15,13 +15,24 @@ if (process.env.DatabaseModes == 10){
     client = mysql.createPool({
         connectionLimit : 10,
         host            : process.env.DatabaseHost,
+        port            : process.env.DatabasePort,
         user            : process.env.DatabaseUser,
         password        : process.env.DatabasePassword,
         database        : process.env.Database_Database
       });
 }
 if (process.env.DatabaseModes == 20){
-    postgres = require('')
+    postgres = require('pg')
+    var config = {
+        user: process.env.DatabaseUser, // env var: PGUSER
+        database: process.env.Database_Database, // env var: PGDATABASE
+        password: process.env.DatabasePassword, // env var: PGPASSWORD
+        host: process.env.DatabaseHost, // Server hosting the postgres database
+        port: process.env.DatabasePort, // env var: PGPORT
+        max: 10, // max number of clients in the pool
+        idleTimeoutMillis: 30000 // how long a client is allowed to remain idle before being closed
+      }
+    client = new postgres.Pool(config)
 }
 
 app.use(bodyParser.json())

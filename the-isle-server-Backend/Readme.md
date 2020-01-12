@@ -20,6 +20,7 @@ DatabaseHost=""
 DatabaseUser=""
 DatabasePassword=""
 Database_Database=""
+DatabasePort=
 ```
 Add This to the end if you using database MySQL management NOT IMPLELEMENTED
 ```
