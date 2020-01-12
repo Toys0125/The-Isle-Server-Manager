@@ -10,8 +10,8 @@ const path = require("path");
 const shared = require("../functions/shared");
 app.use(bodyParser.json());
 if (!process.env.SteamAPIKEY) {
-  console.error("Missing SteamAPIKEY in .env")
-  throw "Missing SteamAPIKEY in .env"
+  console.error("Missing SteamAPIKEY in .env");
+  throw "Missing SteamAPIKEY in .env";
 }
 router.use(function timeLog(req, res, next) {
   var date = new Date();
@@ -32,11 +32,11 @@ router.use(function timeLog(req, res, next) {
   if (req.hostname == "localhost") {
     next();
   } else {
-    return res.status(403).send("Incorrect origin")
+    return res.status(403).send("Incorrect origin");
   }
 });
 
-router.get("/", async function (req, res) {
+router.get("/", async function(req, res) {
   // console.log ("Going to send all steamids + names")
   let content = [];
   var steamids = [];
@@ -59,6 +59,8 @@ router.get("/", async function (req, res) {
     entry.forEach(item => {
       steamids.push(item.split(".")[0]);
     });
+  } else {
+    client = DatabaseConnect()
   }
   console.log("Next part");
   var temp = [];
@@ -84,10 +86,10 @@ router.get("/", async function (req, res) {
     temp.push(string);
   }
   await Promise.all(
-    temp.map(async function (element) {
+    temp.map(async function(element) {
       await axios
         .get(element)
-        .then(function (res) {
+        .then(function(res) {
           data = res.data.response.players;
 
           data.forEach(element => {
@@ -100,7 +102,7 @@ router.get("/", async function (req, res) {
           });
           // console.log("Content in axios",content)
         })
-        .catch(function (error) {
+        .catch(function(error) {
           console.error("Steam request errored", error);
           return res.status(500).send(error);
         });
@@ -109,7 +111,7 @@ router.get("/", async function (req, res) {
   // console.log("Cotent outside",content)
   return res.status(200).send(content);
 });
-router.get("/id/:steamid", async function (req, res) {
+router.get("/id/:steamid", async function(req, res) {
   var steamid = req.params.steamid;
   var file = {};
   try {
@@ -122,17 +124,17 @@ router.get("/id/:steamid", async function (req, res) {
   file = JSON.parse(file);
   return res.status(200).send(file);
 });
-router.put("/id/:steamid", async function (req, res) {
+router.put("/id/:steamid", async function(req, res) {
   var data = req.body;
   // console.log(data)
   var steamid = req.params.steamid;
   try {
-    shared.SaveSteamFile(steamid, data)
+    shared.SaveSteamFile(steamid, data);
   } catch (error) {
     console.error(
       "Error while writing to players file " +
-      string(steamid) +
-      " with data of",
+        string(steamid) +
+        " with data of",
       data,
       error
     );
