@@ -9,52 +9,30 @@ const bodyParser = require('body-parser')
 //const axios = require('axios')
 const path = require('path')
 
-var client = null
-if (process.env.DatabaseModes == 10){
-    mysql = require("mysql")
-    client = mysql.createPool({
-        connectionLimit : 10,
-        host            : process.env.DatabaseHost,
-        port            : process.env.DatabasePort,
-        user            : process.env.DatabaseUser,
-        password        : process.env.DatabasePassword,
-        database        : process.env.Database_Database
-      });
-}
-if (process.env.DatabaseModes == 20){
-    postgres = require('pg')
-    var config = {
-        user: process.env.DatabaseUser, // env var: PGUSER
-        database: process.env.Database_Database, // env var: PGDATABASE
-        password: process.env.DatabasePassword, // env var: PGPASSWORD
-        host: process.env.DatabaseHost, // Server hosting the postgres database
-        port: process.env.DatabasePort, // env var: PGPORT
-        max: 10, // max number of clients in the pool
-        idleTimeoutMillis: 30000 // how long a client is allowed to remain idle before being closed
-      }
-    client = new postgres.Pool(config)
-}
-
 app.use(bodyParser.json())
 var loginDetails = null
-if (!process.env.DatabaseModes){
-if (fs.existsSync(path.resolve(process.cwd(), './login.cfg'))) {
-    loginDetails = JSON.parse(fs.readFileSync(path.resolve(process.cwd(), './login.cfg')))
-} else {
-    loginDetails = []
-    var tempUser = {}
-    tempUser.username = "Temp"
-    var tempPassword = bcrypt.hashSync("Temp", 6)
-    tempUser.password = tempPassword
-    tempUser.scope = "Master"
-    tempUser.id = 0
-    loginDetails.push(tempUser)
-    if (Promise.all(writeLoginFile()) == 0) {
-        console.log("Created a login.cfg that a temp user with a username: Temp\npassword: Temp")
+if (!process.env.DatabaseModes) {
+    if (fs.existsSync(path.resolve(process.cwd(), './login.cfg'))) {
+        loginDetails = JSON.parse(fs.readFileSync(path.resolve(process.cwd(), './login.cfg')))
     } else {
-        console.error("Failed to make Temp user.")
+        loginDetails = []
+        var tempUser = {}
+        tempUser.username = "Temp"
+        var tempPassword = bcrypt.hashSync("Temp", 6)
+        tempUser.password = tempPassword
+        tempUser.scope = "Master"
+        tempUser.id = 0
+        loginDetails.push(tempUser)
+        if (Promise.all(writeLoginFile()) == 0) {
+            console.log("Created a login.cfg that a temp user with a username: Temp\npassword: Temp")
+        } else {
+            console.error("Failed to make Temp user.")
+        }
     }
-}
+} else {
+    // Check if the user database is made
+    const client = databaseConnect()
+
 }
 async function writeLoginFile() {
     try {
@@ -73,32 +51,68 @@ async function writeLoginFile() {
 }
 async function Login(username, password, res) {
     var stats = {}
-    for (item in loginDetails) {
-        if (item.username == username) {
-            return bcrypt.compare(password, item.password).then(async function (bresponse) {
-                if (!bresponse) {
-                    stats.status = 401
-                    return res.status(401).send("Incorrect username/password")
-                }
-                var hash = crypto.randomBytes(20).toString('hex')
-                item.hash = hash
-                var time = Date.now() + 3600000
-                time = new Date(time).toISOString()
-                item.time = time
+    if (!process.env.DatabaseModes) {
+        for (item in loginDetails) {
+            if (item.username == username) {
+                return bcrypt.compare(password, item.password).then(async function (bresponse) {
+                    if (!bresponse) {
+                        return res.status(401).send("Incorrect username/password")
+                    }
+                    var hash = crypto.randomBytes(20).toString('hex')
+                    item.hash = hash
+                    var time = Date.now() + 3600000
+                    time = new Date(time).toISOString()
+                    item.time = time
+                    stats.token = hash
+                    if (Promise.all(writeLoginFile) != -10) {
+                        res.json({
+                            token: hash
+                        })
+                        return res.status(200)
+                    } else {
+                        return res.status(500).send("Internal Server Error!")
+                    }
 
-                stats.status = 200
-                stats.token = hash
-                if (Promise.all(writeLoginFile) != -10) {
-                    return res.status(200)
-                } else {
-                    return res.status(500).send("Internal Server Error!")
-                }
+                })
 
-            })
-
+            }
         }
+        return res.status(401).send("Incorrect username/password")
+    } else {
+        const client = databaseConnect()
+        var results = await client.query('select * from Users where username = ?', username).catch(function (error) {
+            console.error(error)
+            return res.status(500)
+        })
+        if (length(results) < 1) {
+            console.error("Username not found", username)
+            return res.stauts(401).send("Incorrect username/password")
+        }
+        return bcrypt.compare(password, results[0].password).then(async function (bresponse) {
+            if (!bresponse) {
+                return res.status(401).send("Incorrect username/password")
+            }
+            var hash = crypto.randomBytes(20).toString('hex')
+            var time = Date.now() + 3600000
+            time = new Date(time).toISOString()
+            await client.query('update Users set hash=?,time=? where username=?', [hash, time, username]).catch(function (error) {
+                client.release()
+                console.error(error)
+                return res.status(500)
+            })
+            client.release()
+            if (Promise.all(writeLoginFile) != -10) {
+                res.json({
+                    token: hash
+                })
+                return res.status(200)
+            } else {
+                return res.status(500).send("Internal Server Error!")
+            }
+
+        })
+
     }
-    return res.status(401).send("Incorrect username/password")
 }
 router.use(function timeLog(req, res, next) {
     var date = new Date()
@@ -134,38 +148,80 @@ router.put('/user', async function (req, res) {
 router.post('/user', async function (req, res) {
     var data = req.body
     var user = {}
-    user.username = data.username
-    var tempPassword = bcrypt.hashSync(data.password, 6)
-    user.password = tempPassword
-    user.scope = data.scope
-    user.id = length(loginDetails) - 1
-    loginDetails.push(user)
-    return res.status(200)
+    if (!process.env.DatabaseModes) {
+        user.username = data.username
+        
+        user.password = tempPassword
+        user.scope = data.scope
+        user.id = length(loginDetails) - 1
+        loginDetails.push(user)
+        return res.status(200)
+    } else {
+        var tempPassword = bcrypt.hashSync(data.password, 6)
+        var values = [
+            data.username,
+            tempPassword,
+            data.scope
+        ]
+        const client = databaseConnect()
+        await client.query('insert into Users ')
+    }
 })
 router.post('/verify', async function (req, res) {
     var data = req.body
-    for (item in loginDetails) {
-        if (item.username == data.username) {
-            try {
-                if (Date.parse(item.time) <= new Date.now()) {
-                    res.json({
-                        status: "delete"
-                    })
-                    return res.status(200)
+    if (!process.env.DatabaseModes) {
+        for (item in loginDetails) {
+            if (item.username == data.username) {
+                try {
+                    if (Date.parse(item.time) <= new Date.now()) {
+                        res.json({
+                            status: "delete"
+                        })
+                        return res.status(200)
+                    }
+                } catch (error) {
+                    console.error(error)
+                    return res.status(500)
                 }
-            } catch (error) {
-                console.error(error)
-                return res.status(500)
-            }
-            if (item.hash == data.hash) {
-                return res.status(200).send("Authenticated")
-            } else {
-                return res.status(403).send("Incorrect")
+                if (item.hash == data.hash) {
+                    return res.status(200).send("Authenticated")
+                } else {
+                    return res.status(403).send("Incorrect")
+                }
             }
         }
+        console.error("No Username found", data)
+        return res.status(403).send("Incorrect")
+    } else {
+        const client = databaseConnect()
+        var results = await client.query('select * from Users where username = ?', data.username).catch(function (error) {
+            client.release()
+            console.error(error)
+            return res.status(500)
+        })
+        if (length(results) < 1) {
+            console.error("No username found")
+            return res.status(403).send("Incorrect")
+        }
+        client.release()
+        try {
+            if (Date.parse(results[0].time) <= new Date.now()) {
+                res.json({
+                    status: "delete"
+                })
+                return res.status(200)
+            }
+        } catch (error) {
+            console.error(error)
+            return res.status(500)
+        }
+        if (results[0].hash == data.hash) {
+            return res.status(200).send("Authenticated")
+        } else {
+            return res.status(403).send("Incorrect")
+        }
     }
-    console.error("No Username found", data)
-    return res.status(403).send("Incorrect")
+
 })
 
 

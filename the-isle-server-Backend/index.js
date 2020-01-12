@@ -18,6 +18,31 @@ if (!process.env.PORT){
     console.error("Missing PORT in .env")
     throw "Missing PORT in .env"
 }
+global.pool = null
+if (process.env.DatabaseModes == 10) {
+    mysql = require("mysql")
+    pool = mysql.createPool({
+        connectionLimit: 10,
+        host: process.env.DatabaseHost,
+        port: process.env.DatabasePort,
+        user: process.env.DatabaseUser,
+        password: process.env.DatabasePassword,
+        database: process.env.Database_Database
+    });
+}
+if (process.env.DatabaseModes == 20) {
+    postgres = require('pg')
+    var config = {
+        user: process.env.DatabaseUser,
+        database: process.env.Database_Database,
+        password: process.env.DatabasePassword,
+        host: process.env.DatabaseHost,
+        port: process.env.DatabasePort,
+        max: 10,
+        idleTimeoutMillis: 30000
+    }
+    pool = new postgres.Pool(config)
+}
 if (process.env.DatabaseModes){
     if (!process.env.DatabaseHost){
         console.error("Missing DatabaseHost")
@@ -34,6 +59,11 @@ if (process.env.DatabaseModes){
     if (!process.env.Database_Database){
         console.error("Missing Database_Database")
         throw "Missing Database_Database"
+    }
+    if(process.env.DatabaseModes==10){
+        global.DatabaseConnect = function(config){return pool.createConnection(config)}
+    }else if (process.env.DatabaseModes==20){
+        global.DatabaseConnect = function(config){return pool.connect(config)}
     }
 }
 fs.readFile(process.cwd()+"/config.cfg",function(err,contents){
