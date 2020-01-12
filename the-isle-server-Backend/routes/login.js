@@ -20,19 +20,27 @@ if (!process.env.DatabaseModes) {
         tempUser.username = "Temp"
         var tempPassword = bcrypt.hashSync("Temp", 6)
         tempUser.password = tempPassword
-        tempUser.scope = "Master"
+        tempUser.scope = ["Master","Admin","User"]
         tempUser.id = 0
         loginDetails.push(tempUser)
-        if (Promise.all(writeLoginFile()) == 0) {
-            console.log("Created a login.cfg that a temp user with a username: Temp\npassword: Temp")
-        } else {
-            console.error("Failed to make Temp user.")
-        }
+        writeLoginFile().then(function(code){
+            if (code == 0){
+                console.log("Created a login.cfg that a temp user\nusername: Temp\npassword: Temp")
+            } else{
+                console.error("Failed to make Temp user.")
+            }
+        })
     }
 } else {
     // Check if the user database is made
-    const client = databaseConnect()
-
+    const client = DatabaseConnect()
+    var query = "If OBJECT_ID ('User.Users') IS NOT NULL Begin return 1 End;"
+    var result = client.query(query)
+    console.log("Check if user database exist",result)
+    if (result != 1){
+        query = "Create Table Users(id int NOT NULL PRIMARY KEY, username varchar(255), password varchar(255), scope varchar(255);"
+        client.query(query)
+    }
 }
 async function writeLoginFile() {
     try {
@@ -64,23 +72,24 @@ async function Login(username, password, res) {
                     time = new Date(time).toISOString()
                     item.time = time
                     stats.token = hash
-                    if (Promise.all(writeLoginFile) != -10) {
-                        res.json({
-                            token: hash
-                        })
-                        return res.status(200)
-                    } else {
-                        return res.status(500).send("Internal Server Error!")
-                    }
-
+                    writeLoginFile().then(code =>{
+                        if (code !=10){
+                            res.json({
+                                token: hash
+                            })
+                            return res.status(200)
+                        } else{
+                            return res.status(500).send("Internal Server Error!")
+                        }
+                    })
                 })
 
             }
         }
         return res.status(401).send("Incorrect username/password")
     } else {
-        const client = databaseConnect()
-        var results = await client.query('select * from Users where username = ?', username).catch(function (error) {
+        const client = DatabaseConnect()
+        var results = await client.query('select * from Users where username = ?;', username).catch(function (error) {
             console.error(error)
             return res.status(500)
         })
@@ -95,7 +104,7 @@ async function Login(username, password, res) {
             var hash = crypto.randomBytes(20).toString('hex')
             var time = Date.now() + 3600000
             time = new Date(time).toISOString()
-            await client.query('update Users set hash=?,time=? where username=?', [hash, time, username]).catch(function (error) {
+            await client.query('update Users set hash=?,time=? where username=?;', [hash, time, username]).catch(function (error) {
                 client.release()
                 console.error(error)
                 return res.status(500)
@@ -163,8 +172,13 @@ router.post('/user', async function (req, res) {
             tempPassword,
             data.scope
         ]
-        const client = databaseConnect()
-        await client.query('insert into Users ')
+        const client = DatabaseConnect()
+        await client.query('insert into Users(username,password,scope) VALUES(?,?,?);',values).catch(function(error){
+            console.error(error)
+            client.release()
+            return res.status(500)
+        })
+        return res.status(200)
     }
 })
 router.post('/verify', async function (req, res) {
@@ -193,8 +207,8 @@ router.post('/verify', async function (req, res) {
         console.error("No Username found", data)
         return res.status(403).send("Incorrect")
     } else {
-        const client = databaseConnect()
-        var results = await client.query('select * from Users where username = ?', data.username).catch(function (error) {
+        const client = DatabaseConnect()
+        var results = await client.query('select * from Users where username = ?;', data.username).catch(function (error) {
             client.release()
             console.error(error)
             return res.status(500)
