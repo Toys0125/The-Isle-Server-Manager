@@ -4,7 +4,7 @@ var dotenv = require("dotenv")
 var fs = require("fs")
 var cors = require("cors")
 app.use(cors())
-
+dotenv.config()
 var steamRouter = require('./routes/steam')
 var loginRouter = require('./routes/login')
 var userRouter = require('./routes/user')
@@ -12,8 +12,6 @@ var userRouter = require('./routes/user')
 app.use('/steam',steamRouter)
 app.use('/login',loginRouter)
 app.use('/user',userRouter)
-
-dotenv.config()
 if (!process.env.PORT){
     console.error("Missing PORT in .env")
     throw "Missing PORT in .env"
