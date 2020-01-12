@@ -5,7 +5,7 @@ const crypto = require("crypto");
 const path = require("path");
 const fs = require("fs");
 
-import { ReadSteamFile, SaveSteamFile } from "../functions/shared";
+const shared = require("../functions/shared")
 app.use(bodyParser.json());
 
 var apiKeys = null;
@@ -108,7 +108,7 @@ router.get("/id/:steamid", async function(req, res) {
   var file = {};
   try {
     // console.log(path.resolve(process.cwd(),SavePath)+'/'+steamid+'.json')
-    ReadSteamFile(steamid);
+    shared.ReadSteamFile(steamid);
   } catch (error) {
     console.error("Reading file errored", error);
     return res.status(500).send(error);
@@ -121,7 +121,7 @@ router.put("/id/:steamid", async function(req, res) {
   var data = req.body;
   try {
     // console.log(path.resolve(process.cwd(),SavePath)+'/'+steamid+'.json')
-    SaveSteamFile(steamid, data);
+    shared.SaveSteamFile(steamid, data);
   } catch (error) {
     console.error("Write file errored", error);
     return res.status(500).send(error);

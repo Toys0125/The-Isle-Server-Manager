@@ -7,7 +7,7 @@ const bodyParser = require("body-parser");
 const axios = require("axios");
 const path = require("path");
 
-import { ReadSteamFile, SaveSteamFile } from "../functions/shared";
+const shared = require("../functions/shared");
 app.use(bodyParser.json());
 if (!process.env.SteamAPIKEY) {
   console.error("Missing SteamAPIKEY in .env")
@@ -114,7 +114,7 @@ router.get("/id/:steamid", async function (req, res) {
   var file = {};
   try {
     // console.log(path.resolve(process.cwd(),SavePath)+'/'+steamid+'.json')
-    ReadSteamFile(steamid);
+    shared.ReadSteamFile(steamid);
   } catch (error) {
     console.error("Reading file errored", error);
     return res.status(500).send(error);
@@ -127,7 +127,7 @@ router.put("/id/:steamid", async function (req, res) {
   // console.log(data)
   var steamid = req.params.steamid;
   try {
-    SaveSteamFile(steamid, data)
+    shared.SaveSteamFile(steamid, data)
   } catch (error) {
     console.error(
       "Error while writing to players file " +
