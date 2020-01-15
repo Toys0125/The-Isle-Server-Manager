@@ -6,7 +6,7 @@ const router = express.Router()
 
 router.use(function timeLog (req, res, next) {
     var date = new Date()
-    var formattedTimer = "["+date.getMonth()+'/'+date.getDay()+'/'+date.getFullYear()+'] ' + date.getHours()+':'+date.getMinutes()+':'+(date.getSeconds() >9?date.getSeconds():"0"+date.getSeconds())
+    var formattedTimer = "["+(date.getMonth() + 1)+'/'+date.getDay()+'/'+date.getFullYear()+'] ' + date.getHours() > 9 ? date.getHours() : "0" + date.getHours()+':'+date.getMinutes()+':'+(date.getSeconds() >9?date.getSeconds():"0"+date.getSeconds())
     console.log(formattedTimer,req.method,req.originalUrl)
     if (req.hostname == "localhost") {
       next();

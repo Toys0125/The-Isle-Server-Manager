@@ -37,7 +37,7 @@
 </template>
 
 <script>
-import axios from "@nuxtjs/axios";
+import axios from "axios";
 import Cookie from "cookie-universal";
 const cookies = Cookie();
 export default {
@@ -60,7 +60,7 @@ export default {
   },
   methods: {
     async login() {
-      proccessing = true;
+      this.proccessing = true;
       if (this.valid) {
         var self = this;
         var values = {
@@ -68,13 +68,14 @@ export default {
           password: this.password
         };
         await axios
-          .post(backendURL + "/user", values)
+          .post(backendURL + "/login", values)
           .then(function(response) {
+            console.log(response)
             self.$auth.setUser(self.username);
             cookies.set("auth", false);
             self.$auth.$storage.setUniversal("auth", {
               username: self.username,
-              token: response.data.token
+              hash: response.data.hash
             });
             self.$auth.$storage.setUniversal("scope", response.data.scope);
             if (self.$auth.$state.redirect) {

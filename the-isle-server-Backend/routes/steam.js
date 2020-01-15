@@ -14,13 +14,13 @@ router.use(function timeLog(req, res, next) {
   var date = new Date();
   var formattedTimer =
     "[" +
-    date.getMonth() +
+    (date.getMonth() + 1) +
     "/" +
     date.getDay() +
     "/" +
     date.getFullYear() +
     "] " +
-    date.getHours() +
+    date.getHours() > 9 ? date.getHours() : "0" + date.getHours() +
     ":" +
     date.getMinutes() +
     ":" +
@@ -113,7 +113,7 @@ router.get("/id/:steamid", async function(req, res) {
   var file = {};
   try {
     // console.log(path.resolve(process.cwd(),SavePath)+'/'+steamid+'.json')
-    shared.ReadSteamFile(steamid);
+    file = shared.ReadSteamFile(steamid);
   } catch (error) {
     console.error("Reading file errored", error);
     return res.status(500).send(error);
@@ -126,7 +126,7 @@ router.put("/id/:steamid", async function(req, res) {
   // console.log(data)
   var steamid = req.params.steamid;
   try {
-    shared.SaveSteamFile(steamid, data);
+    file = shared.SaveSteamFile(steamid, data);
   } catch (error) {
     console.error(
       "Error while writing to players file " +

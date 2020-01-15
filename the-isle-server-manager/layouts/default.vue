@@ -31,13 +31,7 @@
               <v-list-item-title>Edit</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
-          <v-list-item @click="logout">
-            <v-list-item-action>
-              <v-icon>mdi-exit-to-app</v-icon>
-            </v-list-item-action>
-            <v-list-item-content>Logout</v-list-item-content>
-          </v-list-item>
-          <dir v-if="isAdmin()">
+          <dir v-if="isAdmin">
             <v-list-item to="/user">
               <v-list-item-action>
                 <v-icon>mdi-login-variant</v-icon>
@@ -47,6 +41,12 @@
               </v-list-item-content>
             </v-list-item>
           </dir>
+          <v-list-item @click="logout">
+            <v-list-item-action>
+              <v-icon>mdi-exit-to-app</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>Logout</v-list-item-content>
+          </v-list-item>
         </dir>
         <dir v-else>
           <v-list-item to="/login">
@@ -135,14 +135,15 @@ export default {
     };
   },
   created() {
+    global.backendURL = process.env.BackendURL + process.env.BackendPORT;
     var loginkey = {};
     if (this.$auth.$storage.getUniversal("auth")) {
-      var loginkey = JSON.parse(this.$auth.$storage.getUniversal("auth"));
+      var loginkey = this.$auth.$storage.getUniversal("auth");
     }
-
-    if (!this.isEmpty(loginkey) && !this.isLoggedIn()) {
+    if (!this.isEmpty(loginkey) && !this.isUserLoggedIn()) {
       console.log("Checking token.");
       var self = this;
+      console.log(loginkey)
       const values = {
         hash: loginkey.hash,
         username: loginkey.username
@@ -150,7 +151,7 @@ export default {
       console.log(values);
       axios
         .post(
-          process.env.BackendURL + process.env.BackendPORT + "/login/token",
+          process.env.BackendURL + process.env.BackendPORT + "/login/verify",
           values
         )
         .then(function(response) {
@@ -158,6 +159,7 @@ export default {
           if (response.data.status != "delete") {
             console.log("Username is", loginkey.username);
             self.$auth.setUser(loginkey.username);
+            self.$auth.$storage.setUniversal("scope", response.data.scope)
           } else {
             self.$auth.$storage.setUniversal("auth", null);
           }
@@ -195,7 +197,7 @@ export default {
     });
     if (!backendURL) {
         global.backendURL = process.env.BackendURL + process.env.BackendPORT;
-      }
+    }
   },
   methods: {
     isUserLoggedIn() {
@@ -227,7 +229,8 @@ export default {
       return true;
     },
     isAdmin() {
-      if (this.$auth.$storage.getUniversal("scope").includes("Management")) {
+      console.log(this.$auth.$storage.getUniversal("scope"))
+      if (this.isUserLoggedIn() && this.$auth.$storage.getUniversal("scope").includes("Management")) {
         return true;
       } else false;
     }
