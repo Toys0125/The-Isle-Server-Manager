@@ -192,10 +192,10 @@ export default {
           : snackbarOptions.timeout
       );
       this.snackBar = true;
-      if (!backendURL) {
+    });
+    if (!backendURL) {
         global.backendURL = process.env.BackendURL + process.env.BackendPORT;
       }
-    });
   },
   methods: {
     isUserLoggedIn() {
