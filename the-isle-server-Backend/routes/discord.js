@@ -6,7 +6,6 @@ const path = require("path");
 const fs = require("fs");
 
 const shared = require("../functions/shared")
-app.use(bodyParser.json());
 
 var apiKeys = null;
 

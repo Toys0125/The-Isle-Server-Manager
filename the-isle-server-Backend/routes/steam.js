@@ -2,13 +2,10 @@ const express = require("express");
 const app = express();
 const router = express.Router();
 const fs = require("fs");
-
-const bodyParser = require("body-parser");
 const axios = require("axios");
 const path = require("path");
 
 const shared = require("../functions/shared");
-app.use(bodyParser.json());
 if (!process.env.SteamAPIKEY) {
   console.error("Missing SteamAPIKEY in .env");
   throw "Missing SteamAPIKEY in .env";

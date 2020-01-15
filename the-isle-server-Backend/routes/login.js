@@ -4,12 +4,8 @@ const router = express.Router()
 const fs = require('fs')
 const bcrypt = require('bcrypt')
 const crypto = require('crypto');
-
-const bodyParser = require('body-parser')
 //const axios = require('axios')
 const path = require('path')
-
-app.use(bodyParser.json())
 var loginDetails = null
 if (!process.env.DatabaseModes) {
     if (fs.existsSync(path.resolve(process.cwd(), './login.cfg'))) {
@@ -135,6 +131,7 @@ router.use(function timeLog(req, res, next) {
 })
 router.post('/', async function (req, res) {
     var data = req.body
+    console.log(data)
     return Login(data.username, data.password, res) // Response is handled in Login Function.
 })
 router.put('/user', async function (req, res) {
