@@ -167,8 +167,10 @@ router.use(function timeLog(req, res, next) {
     date.getDay() +
     "/" +
     date.getFullYear() +
-    "] " +
-    date.getHours() > 9 ? date.getHours() : "0" + date.getHours() +
+    "] ";
+  formattedTimer +=
+    date.getHours() > 9 ? date.getHours() : "0" + date.getHours();
+  formattedTimer +=
     ":" +
     date.getMinutes() +
     ":" +
@@ -201,10 +203,28 @@ router.post("/", async function(req, res) {
   // console.log(data)
   return Login(data.username, data.password, res); // Response is handled in Login Function.
 });
+router.post("/logout",async function(req,res){
+  var data = req.body
+  var checked = false
+  loginDetails.forEach(item => {
+    if (item.username == data.username){
+      checked = true
+      item.hash = null
+      return res.status(200)
+    }
+  })
+  if (!checked){
+    return res.status(404)
+  }
+})
 router.put("/user", async function(req, res) {
   var data = req.body;
+  console.log(data)
+  var checked = false
   loginDetails.forEach(item => {
+    console.log(item)
     if (item.id == data.id) {
+      checked = true
       if (data.username) {
         item.username = data.username;
       }
@@ -214,10 +234,13 @@ router.put("/user", async function(req, res) {
       if (data.scope) {
         item.scope = data.scope;
       }
+      console.log("Sending")
       return res.status(200);
     }
   });
+  if (!checked){
   return res.status(404);
+  }
 });
 router.post("/user", async function(req, res) {
   var data = req.body;
@@ -225,7 +248,7 @@ router.post("/user", async function(req, res) {
   if (!process.env.DatabaseModes) {
       loginDetails.forEach(item =>{
           if (item.username == data.username){
-              
+              return res.status(403).send("Username Already Taken")
           }
       })
     user.username = data.username;
@@ -262,7 +285,7 @@ router.post("/verify", async function(req, res) {
       if (item.username == data.username) {
         checked = true;
         try {
-          if (Date.parse(item.time) <= Date.now()) {
+          if (Date.parse(item.time) <= Date.now() || item.hash == null) {
             res.json({
               status: "delete"
             });

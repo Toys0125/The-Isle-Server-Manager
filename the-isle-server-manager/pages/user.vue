@@ -11,7 +11,7 @@
               :item-text="i => '(' + i.id + ') ' + i.username"
               return-object
               :rules="[i => !!i || 'Item is required']"
-              @change="SetValues"
+              @change="SetValues(false)"
             />
           </v-row>
         </dir>
@@ -55,7 +55,7 @@
           </v-flex>
           <v-flex v-if="MasterAccount && editMode">
             <v-btn
-              @click="deleteDialog=!deleteDialog"
+              @click="deleteDialog = !deleteDialog"
               color="error"
               :disabled="proccessing == 1 ? true : false"
               >Delete</v-btn
@@ -76,7 +76,8 @@
               >
 
               <v-card-text
-                >You about to delete a user from the database this can not be undone</v-card-text
+                >You about to delete a user from the database this can not be
+                undone</v-card-text
               >
 
               <v-checkbox
@@ -162,89 +163,109 @@ export default {
   methods: {
     Update() {
       this.proccessing = true;
-      var values = {
-        username: this.username,
-        password: this.password,
-        scope: this.scope
-      };
+      var values = this.user;
+      values.username =
+        this.username == this.user.username
+          ? this.user.username
+          : this.username;
+      values.password = this.password ? this.password : "";
+      values.scope =
+        this.scope == this.user.scope ? this.user.scope : this.scope;
       var self = this;
-      if(this.valid){
-      axios
-        .put(backendURL + "/login/user", values)
-        .then(function(response) {
-          self.$nuxt.$emit("showSnackbar", {
-            color: "success",
-            text: "Updated User",
-            timeout: 3000
+      if (this.valid) {
+        axios
+          .put(backendURL + "/login/user", values)
+          .then(function(response) {
+            self.$nuxt.$emit("showSnackbar", {
+              color: "success",
+              text: "Updated User",
+              timeout: 3000
+            });
+            setTimeout(3000);
+            self.proccessing = false;
+          })
+          .catch(function(error) {
+            console.error("Updating user", error);
+            self.$nuxt.$emit("showSnackbar", {
+              color: "error",
+              text: "Error! Look at console log for more.",
+              timeout: 3000
+            });
+            setTimeout(3000);
+            self.proccessing = false;
           });
-          setTimeout(3000);
-          self.proccessing = false;
-        })
-        .catch(function(error) {
-          console.error("Updating user", error);
-          self.$nuxt.$emit("showSnackbar", {
-            color: "error",
-            text: "Error! Look at console log for more.",
-            timeout: 3000
-          });
-          setTimeout(3000);
-          self.proccessing = false;
-        });
       }
       this.proccessing = false;
     },
     Register() {
-      this.proccessing = true
+      this.proccessing = true;
       var values = {
         username: this.username,
         password: this.password,
         scope: this.scope
       };
       var self = this;
-      if (this.valid){
-      axios
-        .post(backendURL + "/login/user", values)
-        .then(function(response) {
-          self.$nuxt.$emit("showSnackbar", {
-            color: "success",
-            text: "Registered User",
-            timeout: 3000
+      if (this.valid) {
+        axios
+          .post(backendURL + "/login/user", values)
+          .then(function(response) {
+            self.$nuxt.$emit("showSnackbar", {
+              color: "success",
+              text: "Registered User",
+              timeout: 3000
+            });
+            setTimeout(3000);
+            self.proccessing = false;
+          })
+          .catch(function(error) {
+            var bool = true;
+            if (error.response.status == 403) {
+              if (error.response.body == "Username Already Taken") {
+                bool = false;
+                self.$nuxt.$emit("showSnackbar", {
+                  color: "error",
+                  text: "Error! Look at console log for more.",
+                  timeout: 3000
+                });
+              }
+            }
+            if (bool) {
+              console.error("Registering user", error);
+              self.$nuxt.$emit("showSnackbar", {
+                color: "error",
+                text: "Error! Look at console log for more.",
+                timeout: 3000
+              });
+            }
+
+            setTimeout(3000);
+            self.proccessing = false;
           });
-          setTimeout(3000);
-          self.proccessing = false;
-        })
-        .catch(function(error) {
-          console.error("Registering user", error);
-          self.$nuxt.$emit("showSnackbar", {
-            color: "error",
-            text: "Error! Look at console log for more.",
-            timeout: 3000
-          });
-          setTimeout(3000);
-          self.proccessing = false;
-        });
       }
       this.proccessing = false;
     },
-    Delete(){
-      this.proccessing = true
-      this.deleteDialog = false
-      var auth = this.$auth.$storage.getUniversal('auth')
+    Delete() {
+      this.proccessing = true;
+      this.deleteDialog = false;
+      var auth = this.$auth.$storage.getUniversal("auth");
       var values = {
         id: this.id,
         username: auth.username,
         hash: auth.hash
-      }
-      var self = this
-      axios.delete(backendURL+'/login',values).then(function(response){
-        self.$nuxt.$emit("showSnackbar", {
+      };
+      var self = this;
+      axios
+        .delete(backendURL + "/login", values)
+        .then(function(response) {
+          self.$nuxt.$emit("showSnackbar", {
             color: "success",
             text: "Deleted User",
             timeout: 6000
           });
           setTimeout(3000);
           self.proccessing = false;
-      }).catch(function(error) {
+        })
+        .catch(function(error) {
           console.error("Deleting user", error);
           self.$nuxt.$emit("showSnackbar", {
             color: "error",
@@ -260,6 +281,7 @@ export default {
         this.username = this.user.username;
         this.scope = this.user.scope;
       } else {
+        console.log("emptying");
         this.user = null;
         this.username = null;
         this.scope = null;
@@ -288,7 +310,7 @@ export default {
           self.proccessing = false;
         })
         .catch(function(error) {
-          console.error("Get Users",error)
+          console.error("Get Users", error);
           self.$nuxt.$emit("showSnackbar", {
             color: "error",
             text: "Error! Look at console log for more.",

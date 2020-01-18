@@ -61,8 +61,8 @@ export default {
       local: {
         endpoints: {
           login: { url: process.env.BackendURL+process.env.BackendPORT+'/login', method: 'post', propertyName: false },
-          user: {url: process.env.BackendURL+process.env.BackendPORT+'/user', method:'get', propertyName:'data'},
-          logout: null
+          user: {url: process.env.BackendURL+process.env.BackendPORT+'/user', method:'get', propertyName:'user'},
+          logout: false
           // logout: {url: process.env.API_URL+'/login/logout', method: 'post', propertyName:'data'}
         },
         tokenRequired: false,

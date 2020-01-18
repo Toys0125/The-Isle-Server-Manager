@@ -206,18 +206,20 @@ export default {
     },
     async logout() {
       const self = this;
-      await Axios.post(
-        process.env.BackendURL + process.env.BackendPORT + "/login/logout",
+      await axios.post(
+        backendURL + "/login/logout",
         {
           username: self.$auth.user
         }
       ).catch(function(error) {
+        if (error.response.status != 404){
         console.error("Error updating provider " + error);
         this.$nuxt.$emit("showSnackbar", {
           color: "error",
           text: "Error! Look at console log for more.",
           timeout: 3000
         });
+        }
       });
       this.$auth.logout();
       this.$auth.$storage.setUniversal("auth", null);

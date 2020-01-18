@@ -4,7 +4,7 @@ module.exports = {
      ReadSteamFile: function(steamid){
          var file = {}
         try{
-        file = fs.readFileSync(path.resolve(process.cwd(),SavePath)+'/'+steamid+'.json','utf8')
+        file = fs.readFileSync(path.resolve(process.cwd(),SavePath,'./'+steamid+'.json'),'utf8')
         } catch(error){
             throw error
         }
@@ -12,7 +12,7 @@ module.exports = {
     },
     SaveSteamFile: function (steamid,data){
         try{
-            fs.writeFileSync(path.resolve(process.cwd(),SavePath)+'/'+steamid+'.json',JSON.stringify(data))
+            fs.writeFileSync(path.resolve(process.cwd(),SavePath,'./'+steamid+'.json'),JSON.stringify(data))
         } catch(error){
             throw error
         }

@@ -19,8 +19,10 @@ router.use(function timeLog(req, res, next) {
     date.getDay() +
     "/" +
     date.getFullYear() +
-    "] " +
-    date.getHours() > 9 ? date.getHours() : "0" + date.getHours() +
+    "] ";
+  formattedTimer +=
+    date.getHours() > 9 ? date.getHours() : "0" + date.getHours();
+  formattedTimer +=
     ":" +
     date.getMinutes() +
     ":" +
@@ -57,9 +59,9 @@ router.get("/", async function(req, res) {
       steamids.push(item.split(".")[0]);
     });
   } else {
-    client = DatabaseConnect()
+    client = DatabaseConnect();
   }
-  console.log("Next part");
+  // console.log("Next part");
   var temp = [];
   var string =
     "http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=" +
@@ -112,13 +114,18 @@ router.get("/id/:steamid", async function(req, res) {
   var steamid = req.params.steamid;
   var file = {};
   try {
-    // console.log(path.resolve(process.cwd(),SavePath)+'/'+steamid+'.json')
+    // console.log(path.resolve(process.cwd(),SavePath)+'\'+steamid+'.json')
     file = shared.ReadSteamFile(steamid);
   } catch (error) {
     console.error("Reading file errored", error);
-    return res.status(500).send(error);
+    return res.status(500);
   }
+  try{
   file = JSON.parse(file);
+  } catch(error){
+    console.error("File seems to be corrupted", steamid, error)
+    return res.status(500)
+  }
   return res.status(200).send(file);
 });
 router.put("/id/:steamid", async function(req, res) {
@@ -130,7 +137,7 @@ router.put("/id/:steamid", async function(req, res) {
   } catch (error) {
     console.error(
       "Error while writing to players file " +
-        string(steamid) +
+        String(steamid) +
         " with data of",
       data,
       error

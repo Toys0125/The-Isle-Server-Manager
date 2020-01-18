@@ -47,8 +47,10 @@ router.use(function timeLog(req, res, next) {
     date.getDay() +
     "/" +
     date.getFullYear() +
-    "] " +
-    date.getHours() > 9 ? date.getHours() : "0" + date.getHours() +
+    "] ";
+  formattedTimer +=
+    date.getHours() > 9 ? date.getHours() : "0" + date.getHours();
+  formattedTimer +=
     ":" +
     date.getMinutes() +
     ":" +
