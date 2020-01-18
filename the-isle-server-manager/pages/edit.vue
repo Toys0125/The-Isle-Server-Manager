@@ -1,227 +1,349 @@
 <template>
-    <dir>
-  <p>Designed area for editting dinos</p>
-    <v-form
-        ref="form"
-        v-model="valid"
-        lazy-validation
-    >
-        <v-container fluid grid-list-md>
-            <v-layout row>
-                <v-autocomplete
-                    v-model="selectedSteam"
-                    :items="steamNames"
-                    label="SteamName"
-                    required
-                    return-object
-                    prepend-icon="mdi-account"
-                    :item-text="item => item.steamName + ' [' + item.steamid + ']'"
-                    @change="GatherPlayerdata"
-                />
-            </v-layout>
-            <dir v-if="selectedSteam && playerData">
-                <v-layout row>
-                    <v-autocomplete
-                        v-model="selectedDino"
-                        :items="dinoItems"
-                        :item-text="item => item.Dinoname"
-                        :item-value="item => item.DinoID"
-                        label="Dino"
-                        prepend-icon="mdi-cloud"
-                    />
-                </v-layout>
-                
-                <v-layout row>
-                    <v-flex>
-                    <v-text-field
-                        v-model="growth"
-                        label="Growth"
-                        prepend-icon="mdi-arrow-expand-vertical"
-                    />
-                    </v-flex>
-                    <v-flex>
-                        <v-text-field
-                            v-model="health"
-                            label="Health"
-                            prepend-icon="mdi-hospital-box"
-                        />
-                    </v-flex>
-                    <v-checkbox
-                            v-model="selectedGenderCheck"
-                            :label="selectedGender"
-                            @change="flipGender"
-                        />
-                </v-layout>
-                <v-layout row>
-                    <v-layout align-center>
-                        <v-flex md5>
-                            <v-text-field
-                                v-model="xCords"
-                                label="X Cords"
-                            />
-                        </v-flex>
-                        <v-flex md5>
-                            <v-text-field
-                                v-model="yCords"
-                                label="Y Cords"
-                            />
-                        </v-flex>
-                        <v-flex md5>
-                            <v-text-field
-                                v-model="zCords"
-                                label="Z Cords"
-                            />
-                        </v-flex>
-                        <v-flex md5>
-                            TextField
-                        </v-flex>
-                    </v-layout>
-                </v-layout>
-                <v-row
-                    align="center"
-                    justify="center"
-                >
-                    <v-flex md5 align-self-center>
-                        <v-checkbox
-                            v-model="restingobj.check"
-                            :label="restingobj.text"
-                            prepend-icon="mdi-hotel"
-                            @change="flipCheck(['Resting','Standing'],restingobj)"
-                        />
-                        </v-flex>
-                    <v-flex md5 align-self-center>
-                        <v-checkbox
-                            v-model="brokenlegobj.check"
-                            :label="brokenlegobj.text"
-                            prepend-icon="mdi-bone"
-                            @change="flipCheck(['Broken','Not Broken'],brokenlegobj)"
-                        />
-                    </v-flex>
-                </v-row>
-                <v-row>
-                    <v-btn color="info" @click="submitValues" disable="valid ? '' : disabled">Submit</v-btn>
-                </v-row>
-            </dir>
-        </v-container>
+  <dir>
+    <p>Designed area for editting dinos</p>
+    <v-form ref="form" v-model="valid" lazy-validation>
+      <v-container fluid grid-list-md>
+        <v-layout row>
+          <v-autocomplete
+            v-model="selectedSteam"
+            :items="steamNames"
+            label="SteamName"
+            required
+            return-object
+            prepend-icon="mdi-account"
+            :item-text="item => item.steamName + ' [' + item.steamid + ']'"
+            @change="GatherPlayerdata"
+          />
+        </v-layout>
+        <dir v-if="selectedSteam && playerData">
+          <v-layout row>
+            <v-autocomplete
+              v-model="selectedDino"
+              :items="dinoItems"
+              :item-text="item => item.Dinoname"
+              :item-value="item => item.DinoID"
+              label="Dino"
+              prepend-icon="mdi-cloud"
+            />
+          </v-layout>
+
+          <v-layout row>
+            <v-flex>
+              <v-text-field
+                v-model="growth"
+                label="Growth"
+                prepend-icon="mdi-arrow-expand-vertical"
+              />
+            </v-flex>
+            <v-flex>
+              <v-text-field
+                v-model="health"
+                label="Health"
+                prepend-icon="mdi-hospital-box"
+              />
+            </v-flex>
+            <v-checkbox
+              v-model="selectedGenderCheck"
+              :label="selectedGender"
+              @change="flipGender"
+            />
+          </v-layout>
+          <v-row align="center" justity="center">
+              <v-col md3>
+                <v-text-field v-model="xCords" label="X Cords" />
+              </v-col>
+              <v-col md3>
+                <v-text-field v-model="yCords" label="Y Cords" />
+              </v-col>
+              <v-col md3>
+                <v-text-field v-model="zCords" label="Z Cords" />
+              </v-col>
+              <v-flex md1>
+                TextField
+              </v-flex>
+              <v-flex md2>
+              <v-checkbox
+                v-model="restingobj.check"
+                :label="restingobj.text"
+                prepend-icon="mdi-hotel"
+                @change="flipCheck(['Resting', 'Standing'], restingobj)"
+              />
+            </v-flex>
+            <v-flex md2 align-self-center>
+              <v-checkbox
+                v-model="brokenlegobj.check"
+                :label="brokenlegobj.text"
+                prepend-icon="mdi-bone"
+                @change="flipCheck(['Broken', 'Not Broken'], brokenlegobj)"
+              />
+            </v-flex>
+          </v-row>
+          <!-- <v-row align="center" justify="center">
+            <v-flex md5>
+              <v-checkbox
+                v-model="restingobj.check"
+                :label="restingobj.text"
+                prepend-icon="mdi-hotel"
+                @change="flipCheck(['Resting', 'Standing'], restingobj)"
+              />
+            </v-flex>
+            <v-flex md5 align-self-center>
+              <v-checkbox
+                v-model="brokenlegobj.check"
+                :label="brokenlegobj.text"
+                prepend-icon="mdi-bone"
+                @change="flipCheck(['Broken', 'Not Broken'], brokenlegobj)"
+              />
+            </v-flex>
+          </v-row> -->
+          <v-row justify="center">
+            <v-flex md1>
+            <v-btn color="info" @click="setValues">Reset</v-btn>
+            </v-flex>
+            <v-flex md1>
+            <v-btn color="error" @click="reset">Clear</v-btn>
+            </v-flex>
+            <v-flex md1>
+            <v-btn
+              color="info"
+              @click="submitValues"
+              :disabled="proccessing == 1 && valid != true? true : false"
+              >Submit</v-btn
+            >
+            </v-flex>
+          </v-row>
+        </dir>
+      </v-container>
     </v-form>
-    </dir>
+  </dir>
 </template>
 
 <script>
-import axios from "axios"
+import axios from "axios";
 export default {
-    data(){
-        return {
-            valid:false,
-            steamNames:[{steamName:"Temp",steamid:7618169816}],
-            dinoItems:[{Dinoname:"Anky",DinoID:"Anky"},{Dinoname:"AnkyJuv",DinoID:"AnkyJuv"},{Dinoname:"Austro",DinoID:"Austro"},{Dinoname:"AustroJuv",DinoID:"AustroJuv"},{Dinoname:"Ava",DinoID:"Ava"}
-            ,{Dinoname:"AvaJuv",DinoID:"AvaJuv"},{Dinoname:"Camara",DinoID:"Camara"},{Dinoname:"Oro",DinoID:"Oro"},{Dinoname:"Taco",DinoID:"Taco"},{Dinoname:"Puerta",DinoID:"Puerta"},{Dinoname:"Shant",DinoID:"Shant"}
-            ,{Dinoname:"ShantJuv",DinoID:"ShantJuv"},{Dinoname:"Stego",DinoID:"Stego"},{Dinoname:"Theri",DinoID:"Theri"},{Dinoname:"TheriJuv",DinoID:"TheriJuv"},{Dinoname:"Acro",DinoID:"Acro"},{Dinoname:"Albert",DinoID:"Albert"}
-            ,{Dinoname:"Bary",DinoID:"Bary"},{Dinoname:"BaryJuv",DinoID:"BaryJuv"},{Dinoname:"Herrera",DinoID:"Herrera"},{Dinoname:"HerreraJuv",DinoID:"HerreraJuv"},{Dinoname:"Spino",DinoID:"Spino"},{Dinoname:"SpinoJuv",DinoID:"SpinoJuv"}
-            ,{Dinoname:"Velo",DinoID:"Velo"},{Dinoname:"DiabloAdult Survial",DinoID:"DiabloAdult Survial"},{Dinoname:"DiabloJuv Survial",DinoID:"DiabloJuvS"},{Dinoname:"DiabloHatch Survial",DinoID:"DiabloHatchS"},{Dinoname:"DryoAdult Survial",DinoID:"DryoAdultS"}
-            ,{Dinoname:"DryoJuv Survial",DinoID:"DryoJuvS"},{Dinoname:"DryoHatch Survial",DinoID:"DryoHatchS"},{Dinoname:"GalliAdult Survial",DinoID:"GalliAdult"},{Dinoname:"GalliJuv Survial",DinoID:"GalliJuvS"}
-            ,{Dinoname:"GalliHatch Survial",DinoID:"GalliHatchS"},{Dinoname:"MaiaAdult Survial",DinoID:"MaiaAdultS"},{Dinoname:"MaiaHatch Survial",DinoID:"MaiaHatchS"},{Dinoname:"PatchyAdult Survial",DinoID:"PatchyAdultS"},{Dinoname:"PachyHatch Survial",DinoID:"PachyHatchS"}
-            ,{Dinoname:"PachyJuv Survial",DinoID:"PachyJuvS"},{Dinoname:"ParaAdult Survial",DinoID:"ParaAdultS"},{Dinoname:"ParaJuv Survial",DinoID:"ParaJuvS"},{Dinoname:"ParaHatch Survial",DinoID:"ParaHatchS"},{Dinoname:"TrikeAdult Survial",DinoID:"TrikeAdultS"}
-            ,{Dinoname:"TrikeSub Survial",DinoID:"TrikeSubS"},{Dinoname:"TrikeJuv Survial",DinoID:"TrikeJuvS"},{Dinoname:"TrikeHatch Survial",DinoID:"TrikeHatchS"},{Dinoname:"AlloAdult Survial",DinoID:"AlloAdultS"}
-            ,{Dinoname:"AlloJuv Survial",DinoID:"AlloJuvS"},{Dinoname:"AlloHatch Survial",DinoID:"AlloHatchS"},{Dinoname:"CarnoAdult Survial",DinoID:"CarnoAdultS"},{Dinoname:"CarnoJuv Survial",DinoID:"CarnoJuvS"}
-            ,{Dinoname:"CarnoSub Survial",DinoID:"CarnoSubS"},{Dinoname:"CarnoJuv Survial",DinoID:"CarnoJuvS"},{Dinoname:"CarnoHatch Survial",DinoID:"CarnoHatchS"},{Dinoname:"CeratoAdult Survial",DinoID:"CeratoAdultS"}
-            ,{Dinoname:"CeratoJuv Survial",DinoID:"CeratoJuvS"},{Dinoname:"CeratoHatch Survial",DinoID:"CeratoHatchS"},{Dinoname:"DiloAdult Survial",DinoID:"DiloAdultS"},{Dinoname:"DiloJuv Survial",DinoID:"DiloJuvS"}
-            ,{Dinoname:"DiloHatch Survial",DinoID:"DiloHatchS"},{Dinoname:"GigaAdult Survial",DinoID:"GigaAdultS"},{Dinoname:"GigaSub Survial",DinoID:"GigaSubS"},{Dinoname:"GigaJuv Survial",DinoID:"GigaJuvS"}
-            ,{Dinoname:"GigaHatch Survial",DinoID:"GigaHatchS"},{Dinoname:"SuchoAdult Survial",DinoID:"SuchoAdult Survial"},{Dinoname:"SuchJuv Survial",DinoID:"SuchJuvS"},{Dinoname:"SuchoHatch Survial",DinoID:"SuchHatchS"}
-            ,{Dinoname:"RexAdult Survial",DinoID:"RexAdultS"},{Dinoname:"RexSub Survial",DinoID:"RexSubS"},{Dinoname:"RexJuv Survial",DinoID:"RexJuvS"},{Dinoname:"UtahAdult Survial",DinoID:"UtahAdultS"},{Dinoname:"UtahJuv Survial",DinoID:"UtahJuvS"}
-            ,{Dinoname:"UtahHatch Survial",DinoID:"UtahHatchS"}],
-            selectedSteam:'',
-            playerData:null,
-            selectedDino:'',
-            selectedGender:"Male",
-            selectedGenderCheck: false,
-            restingobj:{text:"Standing", check:false},
-            brokenlegobj:{text:"Not Broken",check:false},
-            growth:"",
-            xCords:"",
-            yCords:"",
-            zCords:"",
-            health:"",
-            valid:true
-        }
+  auth: true,
+  data() {
+    return {
+      valid: false,
+      steamNames: [],
+      dinoItems: [
+        { Dinoname: "Anky Sandbox", DinoID: "Anky" },
+        { Dinoname: "AnkyJuv Sandbox", DinoID: "AnkyJuv" },
+        { Dinoname: "Austro Sandbox", DinoID: "Austro" },
+        { Dinoname: "AustroJuv Sandbox", DinoID: "AustroJuv" },
+        { Dinoname: "Ava Sandbox", DinoID: "Ava" },
+        { Dinoname: "AvaJuv Sandbox", DinoID: "AvaJuv" },
+        { Dinoname: "Camara Sandbox", DinoID: "Camara" },
+        { Dinoname: "Oro Sandbox", DinoID: "Oro" },
+        { Dinoname: "Taco Sandbox", DinoID: "Taco" },
+        { Dinoname: "Puerta Sandbox", DinoID: "Puerta" },
+        { Dinoname: "Shant Sandbox", DinoID: "Shant" },
+        { Dinoname: "ShantJuv Sandbox", DinoID: "ShantJuv" },
+        { Dinoname: "Stego Sandbox", DinoID: "Stego" },
+        { Dinoname: "Theri Sandbox", DinoID: "Theri" },
+        { Dinoname: "TheriJuv Sandbox", DinoID: "TheriJuv" },
+        { Dinoname: "Acro Sandbox", DinoID: "Acro" },
+        { Dinoname: "Albert Sandbox", DinoID: "Albert" },
+        { Dinoname: "Bary Sandbox", DinoID: "Bary" },
+        { Dinoname: "BaryJuv Sandbox", DinoID: "BaryJuv" },
+        { Dinoname: "Herrera Sandbox", DinoID: "Herrera" },
+        { Dinoname: "HerreraJuv Sandbox", DinoID: "HerreraJuv" },
+        { Dinoname: "Spino Sandbox", DinoID: "Spino" },
+        { Dinoname: "SpinoJuv Sandbox", DinoID: "SpinoJuv" },
+        { Dinoname: "Velo Sandbox", DinoID: "Velo" },
+        { Dinoname: "DiabloAdult Survival", DinoID: "DiabloAdultS" },
+        { Dinoname: "DiabloJuv Survival", DinoID: "DiabloJuvS" },
+        { Dinoname: "DiabloHatch Survival", DinoID: "DiabloHatchS" },
+        { Dinoname: "DryoAdult Survival", DinoID: "DryoAdultS" },
+        { Dinoname: "DryoJuv Survival", DinoID: "DryoJuvS" },
+        { Dinoname: "DryoHatch Survival", DinoID: "DryoHatchS" },
+        { Dinoname: "GalliAdult Survival", DinoID: "GalliAdult" },
+        { Dinoname: "GalliJuv Survival", DinoID: "GalliJuvS" },
+        { Dinoname: "GalliHatch Survival", DinoID: "GalliHatchS" },
+        { Dinoname: "MaiaAdult Survival", DinoID: "MaiaAdultS" },
+        { Dinoname: "MaiaHatch Survival", DinoID: "MaiaHatchS" },
+        { Dinoname: "PatchyAdult Survival", DinoID: "PatchyAdultS" },
+        { Dinoname: "PachyHatch Survival", DinoID: "PachyHatchS" },
+        { Dinoname: "PachyJuv Survival", DinoID: "PachyJuvS" },
+        { Dinoname: "ParaAdult Survival", DinoID: "ParaAdultS" },
+        { Dinoname: "ParaJuv Survival", DinoID: "ParaJuvS" },
+        { Dinoname: "ParaHatch Survival", DinoID: "ParaHatchS" },
+        { Dinoname: "TrikeAdult Survival", DinoID: "TrikeAdultS" },
+        { Dinoname: "TrikeSub Survival", DinoID: "TrikeSubS" },
+        { Dinoname: "TrikeJuv Survival", DinoID: "TrikeJuvS" },
+        { Dinoname: "TrikeHatch Survival", DinoID: "TrikeHatchS" },
+        { Dinoname: "AlloAdult Survival", DinoID: "AlloAdultS" },
+        { Dinoname: "AlloJuv Survival", DinoID: "AlloJuvS" },
+        { Dinoname: "AlloHatch Survival", DinoID: "AlloHatchS" },
+        { Dinoname: "CarnoAdult Survival", DinoID: "CarnoAdultS" },
+        { Dinoname: "CarnoJuv Survival", DinoID: "CarnoJuvS" },
+        { Dinoname: "CarnoSub Survival", DinoID: "CarnoSubS" },
+        { Dinoname: "CarnoJuv Survival", DinoID: "CarnoJuvS" },
+        { Dinoname: "CarnoHatch Survival", DinoID: "CarnoHatchS" },
+        { Dinoname: "CeratoAdult Survival", DinoID: "CeratoAdultS" },
+        { Dinoname: "CeratoJuv Survival", DinoID: "CeratoJuvS" },
+        { Dinoname: "CeratoHatch Survival", DinoID: "CeratoHatchS" },
+        { Dinoname: "DiloAdult Survival", DinoID: "DiloAdultS" },
+        { Dinoname: "DiloJuv Survival", DinoID: "DiloJuvS" },
+        { Dinoname: "DiloHatch Survival", DinoID: "DiloHatchS" },
+        { Dinoname: "GigaAdult Survival", DinoID: "GigaAdultS" },
+        { Dinoname: "GigaSub Survival", DinoID: "GigaSubS" },
+        { Dinoname: "GigaJuv Survival", DinoID: "GigaJuvS" },
+        { Dinoname: "GigaHatch Survival", DinoID: "GigaHatchS" },
+        { Dinoname: "SuchoAdult Survival", DinoID: "SuchoAdult Survival" },
+        { Dinoname: "SuchJuv Survival", DinoID: "SuchJuvS" },
+        { Dinoname: "SuchoHatch Survival", DinoID: "SuchHatchS" },
+        { Dinoname: "RexAdult Survival", DinoID: "RexAdultS" },
+        { Dinoname: "RexSub Survival", DinoID: "RexSubS" },
+        { Dinoname: "RexJuv Survival", DinoID: "RexJuvS" },
+        { Dinoname: "UtahAdult Survival", DinoID: "UtahAdultS" },
+        { Dinoname: "UtahJuv Survival", DinoID: "UtahJuvS" },
+        { Dinoname: "UtahHatch Survival", DinoID: "UtahHatchS" }
+      ],
+      selectedSteam: "",
+      playerData: null,
+      selectedDino: "",
+      selectedGender: "Male",
+      selectedGenderCheck: false,
+      restingobj: { text: "Standing", check: false },
+      brokenlegobj: { text: "Not Broken", check: false },
+      growth: "",
+      xCords: "",
+      yCords: "",
+      zCords: "",
+      health: "",
+      valid: false,
+      proccessing: false
+    };
+  },
+  created() {
+    this.GatherSteamIds();
+  },
+  methods: {
+    flipGender() {
+      if (this.selectedGenderCheck) {
+        this.selectedGender = "Female";
+      } else {
+        this.selectedGender = "Male";
+      }
     },
-    mounted(){
-        global.backendURL = process.env.BackendURL + process.env.BackendPORT
-        this.GatherSteamIds()
+    flipCheck(values, obj) {
+      if (obj.check) {
+        obj.text = values[0];
+      } else {
+        obj.text = values[1];
+      }
     },
-    methods: {
-        flipGender(){
-            if (this.selectedGenderCheck){
-                this.selectedGender="Female"
-            }else{
-                this.selectedGender="Male"
-            }
-        },
-        flipCheck(values,obj){
-            if (obj.check){
-                obj.text = values[0]
-            }else{
-                obj.text = values[1]
-            }
-        },
-        async GatherSteamIds(){
-            var self = this
-            await axios.get(backendURL+'/steam/').then(function(response){
-                console.log (response);
-                self.steamNames=response.data
-            }).catch(function(err){
-                console.error("GatherSteamIds errored with ", err);
-            })
-        },
-        async GatherPlayerdata(){
-            var self = this
-            await axios.get(backendURL+'/steam/id/'+this.selectedSteam.steamid).then(function(response){
-                self.playerData = response.data
-                self.setValues()
-            })
-            console.log (this.playerData)
-        },
-        setValues(){
-            this.selectedDino = this.playerData.CharacterClass
-            this.selectedGenderCheck = this.playerData.bGender
-            this.flipGender()
-            this.growth = this.playerData.Growth
-            this.health = this.playerData.Health
-            if (this.playerData.BleedingRate != 0){
-                this.playerData.BleedingRate =0
-            }
-            this.restingobj.check = this.playerData.bIsResting
-            this.flipCheck(['Resting','Standing'],this.restingobj)
-            this.brokenlegobj.check = this.playerData.bBrokenLegs
-            this.flipCheck(['Broken','Not Broken'],this.brokenlegobj)
-            var cords = this.playerData.Location_Isle_V3.split(' ')
-            this.xCords = cords[0].split('=')[1]
-            this.yCords = cords[1].split('=')[1]
-            this.zCords = cords[2].split('=')[1]
-        },
-        async submitValues(){
-            var newData = this.playerData
-            newData.CharacterClass = this.selectedDino
-            newData.bGender = this.selectedGenderCheck
-            newData.growth = this.growth
-            newData.bIsResting = this.restingobj.check
-            newData.bBrokenLegs = this.brokenlegobj.check
-            newData.Hunger = "9999999"
-            newData.Thirst = "9999999"
-            newData.Stamina = "99999999"
-            this.health != this.playerData.Health?newData.health=this.health:newData.health="99999999"
-            var cords = this.playerData.Location_Isle_V3.split(' ')
-            newData.Location_Isle_V3 = cords[0].split('=')[0] + '='+this.xCords + ' ' + cords[1].split('=')[0] + '=' + this.yCords+' '+cords[2].split('=')[0]+'='+this.zCords
-            this.valid= false;
-            await axios.put(backendURL+'/steam/id/'+this.selectedSteam.steamid,newData).then(function(response){
-                setTimeout(2000)
-                valid = true
-            })
-        }
+    async GatherSteamIds() {
+      var self = this;
+      await axios
+        .get(backendURL + "/steam/")
+        .then(function(response) {
+          console.log(response);
+          self.steamNames = response.data;
+        })
+        .catch(function(err) {
+          console.error("GatherSteamIds errored with ", err);
+          self.$nuxt.$emit("showSnackbar", {
+            color: "error",
+            text: "Error! Look at console log for more.",
+            timeout: 3000
+          });
+        });
+    },
+    async GatherPlayerdata() {
+      this.proccessing = true
+      this.playerData = null
+      var self = this;
+      await axios
+        .get(backendURL + "/steam/id/" + this.selectedSteam.steamid)
+        .then(function(response) {
+          self.playerData = response.data;
+          self.setValues();
+          self.proccessing = false
+        })
+        .catch(function(error) {
+          console.error("GatherPlayerdata", error);
+          self.$nuxt.$emit("showSnackbar", {
+            color: "error",
+            text: "Error! Look at console log for more.",
+            timeout: 3000
+          });
+          setTimeout(3000)
+          self.proccessing = false
+        });
+      this.proccessing = false
+      // console.log(this.playerData);
+    },
+    setValues() {
+      this.selectedDino = this.playerData.CharacterClass;
+      this.selectedGenderCheck = this.playerData.bGender;
+      this.flipGender();
+      this.growth = this.playerData.Growth;
+      this.health = this.playerData.Health;
+      if (this.playerData.BleedingRate != 0) {
+        this.playerData.BleedingRate = 0;
+      }
+      this.restingobj.check = this.playerData.bIsResting;
+      this.flipCheck(["Resting", "Standing"], this.restingobj);
+      this.brokenlegobj.check = this.playerData.bBrokenLegs;
+      this.flipCheck(["Broken", "Not Broken"], this.brokenlegobj);
+      var cords = this.playerData.Location_Isle_V3.split(" ");
+      this.xCords = cords[0].split("=")[1];
+      this.yCords = cords[1].split("=")[1];
+      this.zCords = cords[2].split("=")[1];
+    },
+    async submitValues() {
+      var newData = this.playerData;
+      newData.CharacterClass = this.selectedDino;
+      newData.bGender = this.selectedGenderCheck;
+      newData.growth = this.growth;
+      newData.bIsResting = this.restingobj.check;
+      newData.bBrokenLegs = this.brokenlegobj.check;
+      newData.Hunger = "9999999";
+      newData.Thirst = "9999999";
+      newData.Stamina = "99999999";
+      this.health != this.playerData.Health
+        ? (newData.health = this.health)
+        : (newData.health = "99999999");
+      var cords = this.playerData.Location_Isle_V3.split(" ");
+      newData.Location_Isle_V3 =
+        cords[0].split("=")[0] +
+        "=" +
+        this.xCords +
+        " " +
+        cords[1].split("=")[0] +
+        "=" +
+        this.yCords +
+        " " +
+        cords[2].split("=")[0] +
+        "=" +
+        this.zCords;
+      this.valid = false;
+      await axios
+        .put(backendURL + "/steam/id/" + this.selectedSteam.steamid, newData)
+        .then(function(response) {
+          self.$nuxt.$emit("showSnackbar", {
+            color: "Success",
+            text: "Player has been updated",
+            timeout: 3000
+          });
+          setTimeout(2000);
+          valid = true;
+        })
+        .catch(function(error) {
+          self.$nuxt.$emit("showSnackbar", {
+            color: "error",
+            text: "Error! Look at console log for more.",
+            timeout: 3000
+          });
+        });
+    },
+    reset() {
+      this.$refs.form.reset();
     }
-}
+  }
+};
 </script>
 
-<style>
-
-</style>
+<style></style>

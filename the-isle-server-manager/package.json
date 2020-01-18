@@ -11,9 +11,12 @@
     "generate": "nuxt generate"
   },
   "dependencies": {
+    "@nuxtjs/auth": "^4.8.4",
     "@nuxtjs/axios": "^5.3.6",
     "@nuxtjs/dotenv": "^1.4.0",
+    "cookie-universal": "^2.1.0",
     "dotenv": "^8.2.0",
+    "fs": "0.0.1-security",
     "nuxt": "^2.0.0"
   },
   "devDependencies": {
