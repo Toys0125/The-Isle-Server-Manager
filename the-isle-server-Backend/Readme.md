@@ -13,7 +13,7 @@ PORT=3001
 SteamAPIKEY=xxxxxxxxxxx # https://steamcommunity.com/dev/apikey
 FrontEndHostName="localhost"
 ```
-# DataBase
+# DataBase Not Fully Implemented yet
 Add these into .env for database usage
 ```
 DatabaseHost=""
