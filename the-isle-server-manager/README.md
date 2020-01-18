@@ -18,5 +18,11 @@ $ npm run start
 # generate static project
 $ npm run generate
 ```
-
+# .ENV
+.env file
+```
+BASE_URL=http://localhost:3000
+BackendURL=http://localhost:
+BackendPORT=3001
+```
 For detailed explanation on how things work, check out [Nuxt.js docs](https://nuxtjs.org).
