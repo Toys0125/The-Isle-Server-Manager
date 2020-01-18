@@ -91,6 +91,10 @@ export default {
       }
     }
   },
+  server: {
+    port: process.env.PORT, // default: 3000
+    host: process.env.HOST // default: localhost
+  },
   vue: {
     config: {
       productionTip: false,
