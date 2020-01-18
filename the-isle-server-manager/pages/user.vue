@@ -124,7 +124,7 @@ export default {
       users: [],
       username: "",
       password: "",
-      scopeList: ["User", "Admin", "Master"],
+      scopeList: ["User", "Admin"],
       scope: [],
       editMode: false,
       usernameRules: [
@@ -158,6 +158,9 @@ export default {
       });
       setTimeout(3000);
       this.$router.push("/");
+    }
+    if (this.MasterAccount()){
+      this.scopeList.push("Master")
     }
   },
   methods: {

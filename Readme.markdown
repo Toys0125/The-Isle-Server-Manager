@@ -1,12 +1,14 @@
 # The Isle Server Manager
 For admin owners that want easy injection or view all players in their server.
-# Do not use currently since has no anti-hack or any login features right now
+# Can be used still under Development
 ## Features
 * Edit Player by Steamid
 * Edit Player by Steam Name
 * Edit Player's position
 * Edit Player's Rest/Broken Leg
 * Edit File Database format
+* Make management users
+* Edit passwords for users
 ## Planned Features
 * Use Coco.N Isle map locations (maybe might have to ask others how to inject the js info)
 * Edit using SQL Database format (Need a tester or other info)
