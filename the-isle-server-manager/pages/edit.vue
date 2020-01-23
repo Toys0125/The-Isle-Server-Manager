@@ -161,12 +161,12 @@ export default {
         { Dinoname: "DryoAdult Survival", DinoID: "DryoAdultS" },
         { Dinoname: "DryoJuv Survival", DinoID: "DryoJuvS" },
         { Dinoname: "DryoHatch Survival", DinoID: "DryoHatchS" },
-        { Dinoname: "GalliAdult Survival", DinoID: "GalliAdult" },
+        { Dinoname: "GalliAdult Survival", DinoID: "GalliAdultS" },
         { Dinoname: "GalliJuv Survival", DinoID: "GalliJuvS" },
         { Dinoname: "GalliHatch Survival", DinoID: "GalliHatchS" },
         { Dinoname: "MaiaAdult Survival", DinoID: "MaiaAdultS" },
         { Dinoname: "MaiaHatch Survival", DinoID: "MaiaHatchS" },
-        { Dinoname: "PatchyAdult Survival", DinoID: "PatchyAdultS" },
+        { Dinoname: "PachyAdult Survival", DinoID: "PachyAdultS" },
         { Dinoname: "PachyHatch Survival", DinoID: "PachyHatchS" },
         { Dinoname: "PachyJuv Survival", DinoID: "PachyJuvS" },
         { Dinoname: "ParaAdult Survival", DinoID: "ParaAdultS" },
@@ -244,7 +244,7 @@ export default {
       await axios
         .get(backendURL + "/steam/")
         .then(function(response) {
-          console.log(response);
+          // console.log(response);
           self.steamNames = response.data;
         })
         .catch(function(err) {
@@ -302,7 +302,7 @@ export default {
     timeDiffernce(){
       var dif = (new Date()-this.accesstime)
       dif = Math.round((dif/1000)/60)
-      var string = String(Math.floor(dif/1440))+" Days " + String(Math.floor((dif%1440)/60)) + " Hours " + String(Math.floor((dif%1440)/60)) + " Mins away"
+      var string = String(Math.floor(dif/1440))+" Days " + String(Math.floor((dif%1440)/60)) + " Hours " + String(Math.floor((dif%1440)/60)) + " Mins Last Accessed"
       return string
     },
     async submitValues() {
