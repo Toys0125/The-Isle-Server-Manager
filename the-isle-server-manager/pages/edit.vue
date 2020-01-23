@@ -5,7 +5,7 @@
     <v-form ref="form" v-model="valid" lazy-validation>
       <v-container fluid grid-list-md>
         <v-row v-if="accesstime">
-          <p>{{timeDiffernce()}}</p>
+          <p>{{ timeDiffernce() }}</p>
         </v-row>
         <v-layout row>
           <v-autocomplete
@@ -54,19 +54,19 @@
             />
           </v-layout>
           <v-row align="center" justity="center">
-              <v-col md3>
-                <v-text-field v-model="xCords" label="X Cords" />
-              </v-col>
-              <v-col md3>
-                <v-text-field v-model="yCords" label="Y Cords" />
-              </v-col>
-              <v-col md3>
-                <v-text-field v-model="zCords" label="Z Cords" />
-              </v-col>
-              <v-flex md1>
-                TextField
-              </v-flex>
-              <v-flex md2>
+            <v-col md3>
+              <v-text-field v-model="xCords" label="X Cords" />
+            </v-col>
+            <v-col md3>
+              <v-text-field v-model="yCords" label="Y Cords" />
+            </v-col>
+            <v-col md3>
+              <v-text-field v-model="zCords" label="Z Cords" />
+            </v-col>
+            <v-flex md1>
+              TextField
+            </v-flex>
+            <v-flex md2>
               <v-checkbox
                 v-model="restingobj.check"
                 :label="restingobj.text"
@@ -103,21 +103,21 @@
           </v-row> -->
           <v-row justify="center">
             <v-flex md2>
-            <v-btn color="info" @click="setValues">Reset</v-btn>
+              <v-btn color="info" @click="setValues">Reset</v-btn>
             </v-flex>
             <v-flex md3>
               <v-btn color="blue" @click="setMaxValues">Max Values</v-btn>
             </v-flex>
             <v-flex md2>
-            <v-btn color="error" @click="reset">Clear</v-btn>
+              <v-btn color="error" @click="reset">Clear</v-btn>
             </v-flex>
             <v-flex md2>
-            <v-btn
-              color="info"
-              @click="submitValues"
-              :disabled="proccessing == 1 && valid != true? true : false"
-              >Submit</v-btn
-            >
+              <v-btn
+                color="info"
+                @click="submitValues"
+                :disabled="proccessing == 1 && valid != true ? true : false"
+                >Submit</v-btn
+              >
             </v-flex>
           </v-row>
         </dir>
@@ -129,7 +129,7 @@
 <script>
 import axios from "axios";
 export default {
-  middleware: 'auth',
+  middleware: "auth",
   data() {
     return {
       valid: false,
@@ -169,6 +169,7 @@ export default {
         { Dinoname: "GalliJuv Survival", DinoID: "GalliJuvS" },
         { Dinoname: "GalliHatch Survival", DinoID: "GalliHatchS" },
         { Dinoname: "MaiaAdult Survival", DinoID: "MaiaAdultS" },
+        { Dinoname: "MaiaJuv Survival", DinoID: "MaiaJuvS" },
         { Dinoname: "MaiaHatch Survival", DinoID: "MaiaHatchS" },
         { Dinoname: "PachyAdult Survival", DinoID: "PachyAdultS" },
         { Dinoname: "PachyHatch Survival", DinoID: "PachyHatchS" },
@@ -184,7 +185,6 @@ export default {
         { Dinoname: "AlloJuv Survival", DinoID: "AlloJuvS" },
         { Dinoname: "AlloHatch Survival", DinoID: "AlloHatchS" },
         { Dinoname: "CarnoAdult Survival", DinoID: "CarnoAdultS" },
-        { Dinoname: "CarnoJuv Survival", DinoID: "CarnoJuvS" },
         { Dinoname: "CarnoSub Survival", DinoID: "CarnoSubS" },
         { Dinoname: "CarnoJuv Survival", DinoID: "CarnoJuvS" },
         { Dinoname: "CarnoHatch Survival", DinoID: "CarnoHatchS" },
@@ -222,7 +222,7 @@ export default {
       health: "",
       valid: false,
       proccessing: false,
-      accesstime:""
+      accesstime: ""
     };
   },
   created() {
@@ -261,15 +261,15 @@ export default {
         });
     },
     async GatherPlayerdata() {
-      this.proccessing = true
-      this.playerData = null
+      this.proccessing = true;
+      this.playerData = null;
       var self = this;
       await axios
         .get(backendURL + "/steam/id/" + this.selectedSteam.steamid)
         .then(function(response) {
           self.playerData = response.data;
           self.setValues();
-          self.proccessing = false
+          self.proccessing = false;
         })
         .catch(function(error) {
           console.error("GatherPlayerdata", error);
@@ -278,10 +278,10 @@ export default {
             text: "Error! Look at console log for more.",
             timeout: 3000
           });
-          setTimeout(3000)
-          self.proccessing = false
+          setTimeout(3000);
+          self.proccessing = false;
         });
-      this.proccessing = false
+      this.proccessing = false;
       // console.log(this.playerData.data);
     },
     setValues() {
@@ -301,17 +301,30 @@ export default {
       this.xCords = cords[0].split("=")[1];
       this.yCords = cords[1].split("=")[1];
       this.zCords = cords[2].split("=")[1];
-      this.accesstime = this.playerData.accessTime ? new Date(this.playerData.accessTime) : ""
+      this.accesstime = this.playerData.accessTime
+        ? new Date(this.playerData.accessTime)
+        : "";
     },
-    timeDiffernce(){
-      var dif = (new Date()-this.accesstime)
-      dif = Math.round((dif/1000)/60)
-      var string = String(Math.floor(dif/1440))+" Days " + String(Math.floor((dif%1440)/60)) + " Hours " + String(Math.floor((dif%1440)/60)) + " Mins Last Accessed"
-      return string
+    timeDiffernce() {
+      let dif = new Date() - this.accesstime;
+      if (dif>60){
+      dif = Math.round(dif / 1000 / 60);
+      let string =
+        String(Math.floor(dif / 1440)) +
+        " Days " +
+        String(Math.floor((dif % 1440) / 60)) +
+        " Hours " +
+        String(Math.floor((dif % 1440) / 60)) +
+        " Mins Last Accessed";
+      return string;
+      } else{
+        let string = "Likely Online " + String(Math.floor(dif))+" secs"
+        return string
+      }
     },
-    setMaxValues(){
-      this.growth = "1.0"
-      this.health = "999999999"
+    setMaxValues() {
+      this.growth = "1.0";
+      this.health = "999999999";
     },
     async submitValues() {
       var newData = this.playerData.data;
