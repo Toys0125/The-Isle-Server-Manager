@@ -106,6 +106,9 @@
             <v-btn color="info" @click="setValues">Reset</v-btn>
             </v-flex>
             <v-flex md2>
+              <v-btn color="blue" @click="setMaxValues">Max Values</v-btn>
+            </v-flex>
+            <v-flex md2>
             <v-btn color="error" @click="reset">Clear</v-btn>
             </v-flex>
             <v-flex md2>
@@ -126,7 +129,7 @@
 <script>
 import axios from "axios";
 export default {
-  auth: true,
+  middleware: 'auth',
   data() {
     return {
       valid: false,
