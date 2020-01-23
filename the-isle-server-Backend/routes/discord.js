@@ -5,7 +5,7 @@ const crypto = require("crypto");
 const path = require("path");
 const fs = require("fs");
 
-const shared = require("../functions/shared")
+const shared = require("../functions/shared");
 
 var apiKeys = null;
 
@@ -31,10 +31,10 @@ async function checkAPI(req) {
   }
   try {
     loopAPI(key);
-    return 0
+    return 0;
   } catch (error) {
     console.error(error, key);
-    return -50
+    return -50;
   }
 }
 
@@ -66,16 +66,20 @@ router.use(function timeLog(req, res, next) {
         console.log("Missing API Key");
         return res.status(403).send("Missing API Key");
       }
-      if (code == -50){
-          console.log("Incorrect API Key")
-          return res.status(403)
+      if (code == -50) {
+        console.log("Incorrect API Key");
+        return res.status(403);
       }
     } catch (error) {
       console.error("Checking API error", error);
       return res.status(500).send("Internal Server Error");
     }
   }
-  if (req.hostname == process.env.FrontEndHostName?process.env.FrontEndHostName:"localhost") {
+  if (
+    req.hostname == process.env.FrontEndHostName
+      ? process.env.FrontEndHostName
+      : "localhost"
+  ) {
     next();
   }
 });
@@ -107,15 +111,27 @@ router.post("/apikey", function(req, res) {
 router.get("/id/:steamid", async function(req, res) {
   var steamid = req.params.steamid;
   var file = {};
+  var stats = {};
   try {
     // console.log(path.resolve(process.cwd(),SavePath)+'/'+steamid+'.json')
-    file = shared.ReadSteamFile(steamid);
+    var temp = shared.ReadSteamFile(steamid);
+    file = temp[0];
+    stats = temp[1];
   } catch (error) {
     console.error("Reading file errored", error);
     return res.status(500).send(error);
   }
-  file = JSON.parse(file);
-  return res.status(200).send(file);
+  try {
+    file = JSON.parse(file);
+  } catch (error) {
+    console.error("File seems to be corrupted", steamid, error);
+    return res.status(500).send();
+  }
+  var temp = {
+    data: file,
+    accessTime: stats.atime
+  };
+  return res.status(200).send(temp);
 });
 router.put("/id/:steamid", async function(req, res) {
   var steamid = req.params.steamid;

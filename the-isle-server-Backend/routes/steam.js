@@ -33,7 +33,7 @@ router.use(function timeLog(req, res, next) {
   } else {
     return res.status(403).send("Incorrect origin");
   } */
-  next()
+  next();
 });
 
 router.get("/", async function(req, res) {
@@ -114,20 +114,27 @@ router.get("/", async function(req, res) {
 router.get("/id/:steamid", async function(req, res) {
   var steamid = req.params.steamid;
   var file = {};
+  var stats = {};
   try {
     // console.log(path.resolve(process.cwd(),SavePath)+'\'+steamid+'.json')
-    file = shared.ReadSteamFile(steamid);
+    var temp = shared.ReadSteamFile(steamid);
+    file = temp[0];
+    stats = temp[1];
   } catch (error) {
     console.error("Reading file errored", error);
     return res.status(500).send();
   }
-  try{
-  file = JSON.parse(file);
-  } catch(error){
-    console.error("File seems to be corrupted", steamid, error)
-    return res.status(500).send()
+  try {
+    file = JSON.parse(file);
+  } catch (error) {
+    console.error("File seems to be corrupted", steamid, error);
+    return res.status(500).send();
   }
-  return res.status(200).send(file);
+  var temp = {
+    data: file,
+    accessTime: stats.atime
+  };
+  return res.status(200).send(temp);
 });
 router.put("/id/:steamid", async function(req, res) {
   var data = req.body;
