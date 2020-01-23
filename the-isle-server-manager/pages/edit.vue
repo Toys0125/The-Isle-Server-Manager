@@ -307,19 +307,25 @@ export default {
     },
     timeDiffernce() {
       let dif = new Date() - this.accesstime;
-      if (dif>60){
-      dif = Math.round(dif / 1000 / 60);
-      let string =
-        String(Math.floor(dif / 1440)) +
-        " Days " +
-        String(Math.floor((dif % 1440) / 60)) +
-        " Hours " +
-        String(Math.floor((dif % 1440) / 60)) +
-        " Mins Last Accessed";
-      return string;
-      } else{
-        let string = "Likely Online " + String(Math.floor(dif))+" secs"
-        return string
+      if (dif > 60) {
+        dif = Math.round(dif / 1000 / 60);
+        let string =
+          Math.floor(dif / 1440) == 0
+            ? ""
+            : String(Math.floor(dif / 1440)) + " Days ";
+        string +=
+          Math.floor((dif % 1440) / 60) == 0
+            ? ""
+            : String(Math.floor((dif % 1440) / 60)) + " Hours ";
+        string +=
+          Math.floor((dif % 1440) / 60) == 0
+            ? ""
+            : String(Math.floor((dif % 1440) / 60)) + " Mins";
+        string += " Last Accessed";
+        return string;
+      } else {
+        let string = "Likely Online " + String(Math.floor(dif)) + " secs";
+        return string;
       }
     },
     setMaxValues() {
