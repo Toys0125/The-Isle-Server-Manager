@@ -98,7 +98,6 @@ export default {
   vue: {
     config: {
       productionTip: false,
-      devtools: true
     }
   },
   /*
@@ -110,5 +109,8 @@ export default {
     */
     extend (config, ctx) {
     }
+  },
+  dev: {
+    devtools: true
   }
 }
