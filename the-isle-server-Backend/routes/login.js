@@ -310,8 +310,11 @@ router.post("/verify", async function(req, res) {
       }
     });
     if (!checked) {
-      console.error("No Username found", data);
-      return res.status(403).send("Incorrect");
+      console.error("No Username found/incorrect username", data);
+      res.json({
+        status: "delete"
+      });
+      return res.status(200);
     }
   } else {
     const client = DatabaseConnect();
