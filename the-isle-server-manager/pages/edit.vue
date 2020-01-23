@@ -28,6 +28,7 @@
               :item-value="item => item.DinoID"
               label="Dino"
               prepend-icon="mdi-cloud"
+              @change="setMaxValues"
             />
           </v-layout>
 
@@ -305,6 +306,10 @@ export default {
       var string = String(Math.floor(dif/1440))+" Days " + String(Math.floor((dif%1440)/60)) + " Hours " + String(Math.floor((dif%1440)/60)) + " Mins Last Accessed"
       return string
     },
+    setMaxValues(){
+      this.growth = "1.0"
+      this.health = "999999999"
+    },
     async submitValues() {
       var newData = this.playerData.data;
       newData.CharacterClass = this.selectedDino;
@@ -315,9 +320,7 @@ export default {
       newData.Hunger = "9999999";
       newData.Thirst = "9999999";
       newData.Stamina = "99999999";
-      this.health != this.playerData.data.Health
-        ? (newData.health = this.health)
-        : (newData.health = "99999999");
+      newData.health = this.health;
       var cords = this.playerData.data.Location_Isle_V3.split(" ");
       newData.Location_Isle_V3 =
         cords[0].split("=")[0] +
