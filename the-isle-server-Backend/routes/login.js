@@ -176,7 +176,7 @@ router.use(function timeLog(req, res, next) {
     ":" +
     (date.getSeconds() > 9 ? date.getSeconds() : "0" + date.getSeconds());
   console.log(formattedTimer, req.method, req.originalUrl);
-  if (
+  /* if (
     req.hostname == process.env.FrontEndHostName
       ? process.env.FrontEndHostName
       : "localhost"
@@ -184,7 +184,8 @@ router.use(function timeLog(req, res, next) {
     next();
   } else {
     return res.status(403).send("Incorrect origin");
-  }
+  } */
+  next()
 });
 router.get('/',async function(req,res){
     var group = []
