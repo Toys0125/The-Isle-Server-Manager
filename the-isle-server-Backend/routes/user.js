@@ -22,11 +22,12 @@ router.use(function timeLog (req, res, next) {
     ":" +
     (date.getSeconds() > 9 ? date.getSeconds() : "0" + date.getSeconds());
     console.log(formattedTimer,req.method,req.originalUrl)
-    if (req.hostname == "localhost") {
+    /* if (req.hostname == "localhost") {
       next();
     }else{
         return res.status(403).send("Incorrect origin")
-    }
+    } */
+    next()
   })
 router.get('/',async function(req,res){
     // console.log(req.user)
