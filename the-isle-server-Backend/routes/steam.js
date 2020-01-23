@@ -119,13 +119,13 @@ router.get("/id/:steamid", async function(req, res) {
     file = shared.ReadSteamFile(steamid);
   } catch (error) {
     console.error("Reading file errored", error);
-    return res.status(500);
+    return res.status(500).send();
   }
   try{
   file = JSON.parse(file);
   } catch(error){
     console.error("File seems to be corrupted", steamid, error)
-    return res.status(500)
+    return res.status(500).send()
   }
   return res.status(200).send(file);
 });
@@ -145,6 +145,6 @@ router.put("/id/:steamid", async function(req, res) {
     );
     return res.status(500).send(error);
   }
-  return res.status(200);
+  return res.status(200).send();
 });
 module.exports = router;

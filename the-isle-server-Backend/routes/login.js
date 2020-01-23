@@ -120,7 +120,7 @@ async function Login(username, password, res) {
       .query("select * from Users where username = ?;", username)
       .catch(function(error) {
         console.error(error);
-        return res.status(500);
+        return res.status(500).send();
       });
     if (length(results) < 1) {
       console.error("Username not found", username);
@@ -144,14 +144,14 @@ async function Login(username, password, res) {
           .catch(function(error) {
             client.release();
             console.error(error);
-            return res.status(500);
+            return res.status(500).send();
           });
         client.release();
         if (Promise.all(writeLoginFile) != -10) {
           res.json({
             token: hash
           });
-          return res.status(200);
+          return res.status(200).send();
         } else {
           return res.status(500).send("Internal Server Error!");
         }
@@ -211,11 +211,11 @@ router.post("/logout",async function(req,res){
     if (item.username == data.username){
       checked = true
       item.hash = null
-      return res.status(200)
+      return res.status(200).send()
     }
   })
   if (!checked){
-    return res.status(404)
+    return res.status(404).send()
   }
 })
 router.put("/user", async function(req, res) {
@@ -236,11 +236,11 @@ router.put("/user", async function(req, res) {
         item.scope = data.scope;
       }
       console.log("Sending")
-      return res.status(200);
+      return res.status(200).send();
     }
   });
   if (!checked){
-  return res.status(404);
+  return res.status(404).send();
   }
 });
 router.post("/user", async function(req, res) {
@@ -258,7 +258,7 @@ router.post("/user", async function(req, res) {
     user.scope = data.scope;
     user.id = length(loginDetails) - 1;
     loginDetails.push(user);
-    return res.status(200);
+    return res.status(200).send();
   } else {
     var tempPassword = bcrypt.hashSync(data.password, 6);
     var values = [data.username, tempPassword, data.scope];
@@ -271,9 +271,9 @@ router.post("/user", async function(req, res) {
       .catch(function(error) {
         console.error(error);
         client.release();
-        return res.status(500);
+        return res.status(500).send();
       });
-    return res.status(200);
+    return res.status(200).send();
   }
 });
 router.post("/verify", async function(req, res) {
@@ -290,11 +290,11 @@ router.post("/verify", async function(req, res) {
             res.json({
               status: "delete"
             });
-            return res.status(200);
+            return res.status(200).send();
           }
         } catch (error) {
           console.error(error);
-          return res.status(500);
+          return res.status(500).send();
         }
         // console.debug(item.hash == data.hash);
         // console.debug(item.hash, data.hash);
@@ -302,7 +302,7 @@ router.post("/verify", async function(req, res) {
           res.json({
             scope: item.scope
           });
-          return res.status(200);
+          return res.status(200).send();
         } else {
           return res.status(403).send("Incorrect");
         }
@@ -319,7 +319,7 @@ router.post("/verify", async function(req, res) {
       .catch(function(error) {
         client.release();
         console.error(error);
-        return res.status(500);
+        return res.status(500).send();
       });
     if (length(results) < 1) {
       console.error("No username found");
@@ -331,11 +331,11 @@ router.post("/verify", async function(req, res) {
         res.json({
           status: "delete"
         });
-        return res.status(200);
+        return res.status(200).send();
       }
     } catch (error) {
       console.error(error);
-      return res.status(500);
+      return res.status(500).send();
     }
     if (results[0].hash == data.hash) {
       return res.status(200).send("Authenticated");

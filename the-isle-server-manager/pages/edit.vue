@@ -97,13 +97,13 @@
             </v-flex>
           </v-row> -->
           <v-row justify="center">
-            <v-flex md1>
+            <v-flex md2>
             <v-btn color="info" @click="setValues">Reset</v-btn>
             </v-flex>
-            <v-flex md1>
+            <v-flex md2>
             <v-btn color="error" @click="reset">Clear</v-btn>
             </v-flex>
-            <v-flex md1>
+            <v-flex md2>
             <v-btn
               color="info"
               @click="submitValues"
