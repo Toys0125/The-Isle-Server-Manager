@@ -175,6 +175,9 @@ export default {
             text: "Error! Look at console log for more.",
             timeout: 3000
           });
+          if(error.response.status == 403){
+            self.$auth.$storage.setUniversal("auth", null);
+          }
         });
     }
   },
