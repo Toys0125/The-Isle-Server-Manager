@@ -151,7 +151,7 @@ async function Login(username, password, res) {
           res.json({
             token: hash
           });
-          return res.status(200).send();
+          return res.status(200);
         } else {
           return res.status(500).send("Internal Server Error!");
         }
@@ -291,7 +291,7 @@ router.post("/verify", async function(req, res) {
             res.json({
               status: "delete"
             });
-            return res.status(200).send();
+            return res.status(200);
           }
         } catch (error) {
           console.error(error);
@@ -303,7 +303,7 @@ router.post("/verify", async function(req, res) {
           res.json({
             scope: item.scope
           });
-          return res.status(200).send();
+          return res.status(200);
         } else {
           return res.status(403).send("Incorrect");
         }
@@ -332,7 +332,7 @@ router.post("/verify", async function(req, res) {
         res.json({
           status: "delete"
         });
-        return res.status(200).send();
+        return res.status(200);
       }
     } catch (error) {
       console.error(error);

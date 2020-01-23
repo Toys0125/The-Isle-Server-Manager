@@ -156,7 +156,7 @@ export default {
         )
         .then(function(response) {
           console.log("Responsed with", response);
-          if (response.data.status != "delete") {
+          if (response.data.status&&response.data.status != "delete") {
             console.log("Username is", loginkey.username);
             self.$auth.setUser(loginkey.username);
             self.$auth.$storage.setUniversal("scope", response.data.scope)
