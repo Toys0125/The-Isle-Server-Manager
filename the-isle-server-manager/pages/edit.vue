@@ -1,8 +1,12 @@
 <template>
   <dir>
-    <p>Designed area for editting dinos</p>
+    <v-subheader>Edit Users Dinos</v-subheader>
+    <!-- <p>Designed area for editting dinos</p> -->
     <v-form ref="form" v-model="valid" lazy-validation>
       <v-container fluid grid-list-md>
+        <v-row v-if="accesstime">
+          <p>{{timeDiffernce()}}</p>
+        </v-row>
         <v-layout row>
           <v-autocomplete
             v-model="selectedSteam"
@@ -213,7 +217,8 @@ export default {
       zCords: "",
       health: "",
       valid: false,
-      proccessing: false
+      proccessing: false,
+      accesstime:""
     };
   },
   created() {
@@ -273,28 +278,35 @@ export default {
           self.proccessing = false
         });
       this.proccessing = false
-      // console.log(this.playerData);
+      // console.log(this.playerData.data);
     },
     setValues() {
-      this.selectedDino = this.playerData.CharacterClass;
-      this.selectedGenderCheck = this.playerData.bGender;
+      this.selectedDino = this.playerData.data.CharacterClass;
+      this.selectedGenderCheck = this.playerData.data.bGender;
       this.flipGender();
-      this.growth = this.playerData.Growth;
-      this.health = this.playerData.Health;
-      if (this.playerData.BleedingRate != 0) {
-        this.playerData.BleedingRate = 0;
+      this.growth = this.playerData.data.Growth;
+      this.health = this.playerData.data.Health;
+      if (this.playerData.data.BleedingRate != 0) {
+        this.playerData.data.BleedingRate = 0;
       }
-      this.restingobj.check = this.playerData.bIsResting;
+      this.restingobj.check = this.playerData.data.bIsResting;
       this.flipCheck(["Resting", "Standing"], this.restingobj);
-      this.brokenlegobj.check = this.playerData.bBrokenLegs;
+      this.brokenlegobj.check = this.playerData.data.bBrokenLegs;
       this.flipCheck(["Broken", "Not Broken"], this.brokenlegobj);
-      var cords = this.playerData.Location_Isle_V3.split(" ");
+      var cords = this.playerData.data.Location_Isle_V3.split(" ");
       this.xCords = cords[0].split("=")[1];
       this.yCords = cords[1].split("=")[1];
       this.zCords = cords[2].split("=")[1];
+      this.accesstime = this.playerData.accessTime ? new Date(this.playerData.accessTime) : ""
+    },
+    timeDiffernce(){
+      var dif = (new Date()-this.accesstime)
+      dif = Math.round((dif/1000)/60)
+      var string = String(Math.floor(dif/1440))+" Days " + String(Math.floor((dif%1440)/60)) + " Hours " + String(Math.floor((dif%1440)/60)) + " Mins away"
+      return string
     },
     async submitValues() {
-      var newData = this.playerData;
+      var newData = this.playerData.data;
       newData.CharacterClass = this.selectedDino;
       newData.bGender = this.selectedGenderCheck;
       newData.growth = this.growth;
@@ -303,10 +315,10 @@ export default {
       newData.Hunger = "9999999";
       newData.Thirst = "9999999";
       newData.Stamina = "99999999";
-      this.health != this.playerData.Health
+      this.health != this.playerData.data.Health
         ? (newData.health = this.health)
         : (newData.health = "99999999");
-      var cords = this.playerData.Location_Isle_V3.split(" ");
+      var cords = this.playerData.data.Location_Isle_V3.split(" ");
       newData.Location_Isle_V3 =
         cords[0].split("=")[0] +
         "=" +
