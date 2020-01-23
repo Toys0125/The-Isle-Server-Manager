@@ -1,37 +1,38 @@
 <template>
   <dir>
-    <h2 class="text-center">Login</h2>
-    <hr />
+    <v-subheader>Login</v-subheader>
     <p show v-if="$auth.$state.redirect">
-      You have to login before accessing the Grants Database!
+      You have to login before accessing the isle manager
     </p>
     <v-form ref="form" v-model="valid" lazy-validation>
-      <v-row>
+      <v-container fluid grid-list-md>
+      <v-flex>
         <v-text-field
           v-model="username"
           counter="20"
           label="Username"
           :rules="usernameRules"
         ></v-text-field>
-      </v-row>
-      <v-row>
+      </v-flex>
+      <v-flex>
         <v-text-field
           v-model="password"
           label="Password"
           counter="64"
           :rules="passwordRules"
           type="password"
-          @keyup.enter="proccessing == 0 ? login() : None"
+          @keyup.enter="proccessing == false ? login() : None"
         ></v-text-field>
-      </v-row>
-      <v-row>
+      </v-flex>
+      <v-flex>
         <v-btn
           @click="login()"
           color="info"
           :disabled="proccessing == 1 ? true : false"
           >Login</v-btn
         >
-      </v-row>
+      </v-flex>
+      </v-container>
     </v-form>
   </dir>
 </template>
