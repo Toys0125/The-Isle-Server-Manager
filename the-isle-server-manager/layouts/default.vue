@@ -34,7 +34,7 @@
           <dir v-if="isAdmin">
             <v-list-item to="/user">
               <v-list-item-action>
-                <v-icon>mdi-login-variant</v-icon>
+                <v-icon>mdi-account</v-icon>
               </v-list-item-action>
               <v-list-item-content>
                 <v-list-item-title>Users</v-list-item-title>

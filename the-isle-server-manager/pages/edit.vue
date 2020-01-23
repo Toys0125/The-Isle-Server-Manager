@@ -105,7 +105,7 @@
             <v-flex md2>
             <v-btn color="info" @click="setValues">Reset</v-btn>
             </v-flex>
-            <v-flex md2>
+            <v-flex md3>
               <v-btn color="blue" @click="setMaxValues">Max Values</v-btn>
             </v-flex>
             <v-flex md2>
