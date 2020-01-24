@@ -381,6 +381,21 @@ export default {
     reset() {
       this.$refs.form.reset();
       this.accesstime = null
+      this.selectedSteam= "",
+      this.playerData= null,
+      this.selectedDino= "",
+      this.selectedGender= "Male",
+      this.selectedGenderCheck= false,
+      this.restingobj= { text: "Standing", check: false },
+      this.brokenlegobj= { text: "Not Broken", check: false },
+      this.growth= "",
+      this.xCords= "",
+      this.yCords= "",
+      this.zCords= "",
+      this.health= "",
+      this.valid= false,
+      this.proccessing= false,
+      this.accesstime= ""
     }
   }
 };
