@@ -326,7 +326,7 @@ export default {
         string += " Last Accessed";
         return string;
       } else {
-        let string = "Likely Online " + String(Math.round(dif)) + " secs";
+        let string = "Likely Online " + String(Math.round(dif/1000)) + " secs";
         return string;
       }
     },
