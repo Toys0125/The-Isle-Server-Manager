@@ -308,24 +308,24 @@ export default {
     timeDiffernce() {
       let dif = new Date() - this.accesstime;
       console.log("current time differnce is",dif)
-      if (dif > 60) {
-        dif = Math.round(dif / 1000 / 60);
+      let calc = Math.round(dif / 1000 / 60);
+      if (calc > 1) {
         let string =
-          Math.floor(dif / 1440) == 0
+          Math.floor(calc / 1440) == 0
             ? ""
-            : String(Math.floor(dif / 1440)) + " Days ";
+            : String(Math.floor(calc / 1440)) + " Days ";
         string +=
-          Math.floor((dif % 1440) / 60) == 0
+          Math.floor((calc % 1440) / 60) == 0
             ? ""
-            : String(Math.floor((dif % 1440) / 60)) + " Hours ";
+            : String(Math.floor((calc % 1440) / 60)) + " Hours ";
         string +=
-          Math.floor((dif % 1440) / 60) == 0
+          Math.floor((calc % 1440)) == 0
             ? ""
-            : String(Math.floor((dif % 1440) / 60)) + " Mins";
+            : String(Math.floor((calc % 1440) / 60)) + " Mins";
         string += " Last Accessed";
         return string;
       } else {
-        let string = "Likely Online " + String(Math.floor(dif)) + " secs";
+        let string = "Likely Online " + String(Math.round(dif)) + " secs";
         return string;
       }
     },
