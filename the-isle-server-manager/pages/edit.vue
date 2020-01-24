@@ -322,7 +322,7 @@ export default {
         string +=
           Math.floor((calc % 1440)) == 0
             ? ""
-            : String(Math.floor((calc % 1440) / 60)) + " Mins";
+            : String(Math.floor((calc % 1440)%60)) + " Mins";
         string += " Last Accessed";
         return string;
       } else {
