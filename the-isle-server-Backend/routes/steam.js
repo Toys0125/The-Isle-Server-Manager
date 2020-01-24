@@ -133,7 +133,7 @@ router.get("/id/:steamid", async function(req, res) {
   }
   var temp = {
     data: file,
-    accessTime: stats.atime
+    accessTime: stats.mtime
   };
   return res.status(200).send(temp);
 });
