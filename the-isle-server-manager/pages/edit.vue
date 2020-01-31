@@ -307,9 +307,9 @@ export default {
     },
     timeDiffernce() {
       let dif = new Date() - this.accesstime;
-      console.log("current time differnce is",dif)
+      // console.log("current time differnce is",dif)
       let calc = Math.round(dif / 1000 / 60);
-      console.log(calc)
+      // console.log(calc)
       if (calc > 1) {
         let string =
           Math.floor(calc / 1440) == 0
