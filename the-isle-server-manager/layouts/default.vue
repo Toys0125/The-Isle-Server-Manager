@@ -136,98 +136,8 @@ export default {
   },
   created() {
     global.backendURL = process.env.BackendURL + process.env.BackendPORT;
-    var loginkey = {};
-    if (this.$auth.$storage.getUniversal("auth")) {
-      var loginkey = this.$auth.$storage.getUniversal("auth", true);
-    }
-    if (!this.isEmpty(loginkey) && !this.isUserLoggedIn()) {
-      console.log("Checking token.");
-      var self = this;
-      // console.log(loginkey)
-      const values = {
-        hash: loginkey.hash,
-        username: loginkey.username
-      };
-      // console.log(values);
-      axios
-        .post(
-          process.env.BackendURL + process.env.BackendPORT + "/login/verify",
-          values
-        )
-        .then(function(response) {
-          console.log("Responsed with", response.data);
-          if (!response.data.status||response.data.status != "delete") {
-            console.log("Username is", loginkey.username);
-            self.$auth.setUser(loginkey.username);
-            self.$auth.$storage.setUniversal("scope", response.data.scope)
-          } else {
-            self.$auth.$storage.setUniversal("auth", null);
-          }
-          //Hack around auth-module redirect before I could set it.
-          if (self.$auth.$state.redirect) {
-            self.$router.push(self.$auth.$state.redirect);
-          } else self.$router.push("/");
-        })
-        .catch(function(error) {
-          console.log("Error login with token ", error);
-          self.$nuxt.$emit("showSnackbar", {
-            color: "error",
-            text: "Error! Look at console log for more.",
-            timeout: 3000
-          });
-          if(error.response.status == 403){
-            self.$auth.$storage.setUniversal("auth", null);
-          }
-        });
-    }
   },
   mounted() {
-    console.log("mounted")
-    var loginkey = {};
-    if (this.$auth.$storage.getUniversal("auth")) {
-      var loginkey = this.$auth.$storage.getUniversal("auth", true);
-      console.log("Checked for auths")
-    }
-    if (!this.isEmpty(loginkey) && !this.isUserLoggedIn()) {
-      console.log("Checking token.");
-      var self = this;
-      // console.log(loginkey)
-      const values = {
-        hash: loginkey.hash,
-        username: loginkey.username
-      };
-      // console.log(values);
-      axios
-        .post(
-          process.env.BackendURL + process.env.BackendPORT + "/login/verify",
-          values
-        )
-        .then(function(response) {
-          console.log("Responsed with", response.data);
-          if (!response.data.status||response.data.status != "delete") {
-            console.log("Username is", loginkey.username);
-            self.$auth.setUser(loginkey.username);
-            self.$auth.$storage.setUniversal("scope", response.data.scope)
-          } else {
-            self.$auth.$storage.setUniversal("auth", null);
-          }
-          //Hack around auth-module redirect before I could set it.
-          if (self.$auth.$state.redirect) {
-            self.$router.push(self.$auth.$state.redirect);
-          } else self.$router.push("/");
-        })
-        .catch(function(error) {
-          console.log("Error login with token ", error);
-          self.$nuxt.$emit("showSnackbar", {
-            color: "error",
-            text: "Error! Look at console log for more.",
-            timeout: 3000
-          });
-          if(error.response.status == 403){
-            self.$auth.$storage.setUniversal("auth", null);
-          }
-        });
-    }
     this.$root.$on("showSnackbar", snackbarOptions => {
       this.snackBarColor =
         snackbarOptions.color === ""
@@ -245,7 +155,65 @@ export default {
       this.snackBar = true;
     });
     if (!backendURL) {
-        global.backendURL = process.env.BackendURL + process.env.BackendPORT;
+      global.backendURL = process.env.BackendURL + process.env.BackendPORT;
+    }
+    console.log("mounted");
+    var loginkey = {};
+    if (this.$auth.$storage.getUniversal("auth")) {
+      var loginkey = this.$auth.$storage.getUniversal("auth", true);
+    }
+    if (!this.isEmpty(loginkey) && !this.isUserLoggedIn()) {
+      console.log("Checking token.");
+      var self = this;
+      // console.log(loginkey)
+      const values = {
+        hash: loginkey.hash,
+        username: loginkey.username
+      };
+      // console.log(values);
+      axios
+        .post(
+          process.env.BackendURL + process.env.BackendPORT + "/login/verify",
+          values
+        )
+        .then(function(response) {
+          // console.log("Responsed with", response.data);
+          // console.log(typeof response.data.status);
+          if (
+            typeof response.data.status == "undefined" ||
+            response.data.status != "delete"
+          ) {
+            console.log("Username is", loginkey.username);
+            self.$auth.setUser(loginkey.username);
+            self.$auth.$storage.setUniversal("scope", response.data.scope);
+          } else {
+            self.$auth.$storage.setUniversal("auth", null);
+          }
+          // console.log("Before Push");
+          //Hack around auth-module redirect before I could set it.
+          if (self.$auth.$state.redirect) {
+            console.log("Redirects");
+            self.$router.push(self.$auth.$state.redirect);
+          } else {
+            self.$router.push('/');
+            // console.log("Home Page");
+          }
+        })
+        .catch(function(error) {
+          console.log("Error login with token ", error);
+          self.$nuxt.$emit("showSnackbar", {
+            color: "error",
+            text: "Error! Look at console log for more.",
+            timeout: 3000
+          });
+          // console.log("Before error.response");
+          if (
+            typeof error.response != "undefined" &&
+            error.response.status == 403
+          ) {
+            self.$auth.$storage.setUniversal("auth", null);
+          }
+        });
     }
   },
   methods: {
@@ -255,21 +223,28 @@ export default {
     },
     async logout() {
       const self = this;
-      await axios.post(
-        backendURL + "/login/logout",
-        {
+      await axios
+        .post(backendURL + "/login/logout", {
           username: self.$auth.user
-        }
-      ).catch(function(error) {
-        if (error.response.status != 404){
-        console.error("Error updating provider " + error);
-        this.$nuxt.$emit("showSnackbar", {
-          color: "error",
-          text: "Error! Look at console log for more.",
-          timeout: 3000
+        })
+        .catch(function(error) {
+
+          if (error.response&&error.response.status != 404) {
+            console.error("Error updating provider " + error);
+            self.$nuxt.$emit("showSnackbar", {
+              color: "error",
+              text: "Error! Look at console log for more.",
+              timeout: 3000
+            });
+          } else {
+            console.error("Total error in logout" + error)
+            self.$nuxt.$emit("showSnackbar", {
+              color: "error",
+              text: "Error! Look at console log for more.",
+              timeout: 3000
+            });
+          }
         });
-        }
-      });
       this.$auth.logout();
       this.$auth.$storage.setUniversal("auth", null);
     },
@@ -280,8 +255,11 @@ export default {
       return true;
     },
     isAdmin() {
-      console.log(this.$auth.$storage.getUniversal("scope"))
-      if (this.isUserLoggedIn() && this.$auth.$storage.getUniversal("scope").includes("Management")) {
+      console.log(this.$auth.$storage.getUniversal("scope"));
+      if (
+        this.isUserLoggedIn() &&
+        this.$auth.$storage.getUniversal("scope").includes("Management")
+      ) {
         return true;
       } else false;
     }
