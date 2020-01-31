@@ -19,7 +19,7 @@ module.exports = {
             throw error
         }
     },
-    Verify: function(username,hash){
+    Verify:async function(username,hash){
         if (!process.env.DatabaseModes) {
             loginDetails.forEach(item => {
             //   console.log(item);

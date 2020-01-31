@@ -124,7 +124,7 @@ router.get("/id/:steamid", async function(req, res) {
     console.error(req.connection.remoteAddress, err);
     return res.status(422).send(err);
   }
-  if (!shared.Verify(data.username,data.hash)){
+  if (!await shared.verify(data.username,data.hash)){
     return res.status(403).send("Incorrect hash/username")
   }
   var file = {};
@@ -190,7 +190,7 @@ router.put("/id/:steamid", async function(req, res) {
     console.error(req.connection.remoteAddress, err);
     return res.status(422).send(err);
   }
-  if (!shared.Verify(data.username,data.hash)){
+  if (!await shared.verify(data.username,data.hash)){
     return res.status(403).send("Incorrect hash/username")
   }
   // console.log(data)

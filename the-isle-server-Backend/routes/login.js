@@ -260,7 +260,7 @@ router.put("/user", async function(req, res) {
     console.error(req.connection.remoteAddress,err)
     return res.status(422).send(err)
   }
-  if (!shared.Verify(data.username,data.hash)){
+  if (!await shared.verify(data.username,data.hash)){
     return res.status(403).send("Incorrect hash/username")
   }
   var checked = false
@@ -303,7 +303,7 @@ router.post("/user", async function(req, res) {
     console.error(req.connection.remoteAddress,err)
     return res.status(422).send(err)
   }
-  if (!shared.Verify(data.username,data.hash)){
+  if (!await shared.verify(data.username,data.hash)){
     return res.status(403).send("Incorrect hash/username")
   }
   var user = {};
