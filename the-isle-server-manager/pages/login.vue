@@ -73,7 +73,6 @@ export default {
           .then(function(response) {
             console.log(response)
             self.$auth.setUser(self.username);
-            cookies.set("auth", false);
             self.$auth.$storage.setUniversal("auth", {
               username: self.username,
               hash: response.data.hash
