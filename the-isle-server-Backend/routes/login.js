@@ -6,7 +6,9 @@ const bcrypt = require("bcrypt");
 const crypto = require("crypto");
 //const axios = require('axios')
 const path = require("path");
-var loginDetails = null;
+const Joi = require('@hapi/joi')
+const shared = require("../functions/shared");
+global.loginDetails = null;
 if (!process.env.DatabaseModes) {
   if (fs.existsSync(path.resolve(process.cwd(), "./login.cfg"))) {
     loginDetails = JSON.parse(
@@ -202,11 +204,30 @@ router.get('/',async function(req,res){
 })
 router.post("/", async function(req, res) {
   var data = req.body;
+  const schema = Joi.object({
+    username: Joi.string().required(),
+    password: Joi.string().required()
+  })
+  try{
+  await schema.validateAsync(data)
+  } catch(err) {
+    console.error(req.connection.remoteAddress,err)
+    return res.status(422).send(err)
+  }
   // console.log(data)
   return Login(data.username, data.password, res); // Response is handled in Login Function.
 });
 router.post("/logout",async function(req,res){
   var data = req.body
+  const schema = Joi.object({
+    username: Joi.string().required()
+  })
+  try{
+  await schema.validateAsync(data)
+  } catch(err) {
+    console.error(req.connection.remoteAddress,err)
+    return res.status(422).send(err)
+  }
   var checked = false
   loginDetails.forEach(item => {
     if (item.username == data.username){
@@ -221,20 +242,40 @@ router.post("/logout",async function(req,res){
 })
 router.put("/user", async function(req, res) {
   var data = req.body;
-  console.log(data)
+  // console.log(data) 
+  const userSchema = Joi.object({
+    id: Joi.number().required(),
+    username: Joi.string(),
+    password: Joi.string(),
+    scope: Joi.array()
+  })
+  const schema = Joi.object({
+    username: Joi.string().required(),
+    hash: Joi.string().required(),
+    userdata: Joi.object().schema(userSchema).required()
+  })
+  try{
+  await schema.validateAsync(data)
+  } catch(err) {
+    console.error(req.connection.remoteAddress,err)
+    return res.status(422).send(err)
+  }
+  if (!shared.Verify(data.username,data.hash)){
+    return res.status(403).send("Incorrect hash/username")
+  }
   var checked = false
   loginDetails.forEach(item => {
     console.log(item)
-    if (item.id == data.id) {
+    if (item.id == data.userdata.id) {
       checked = true
-      if (data.username) {
-        item.username = data.username;
+      if (data.userdata.username) {
+        item.username = data.userdata.username;
       }
-      if (data.password) {
-        item.password = bcrypt.hashSync(data.password, 6);
+      if (data.userdata.password) {
+        item.password = bcrypt.hashSync(data.userdata.password, 6);
       }
-      if (data.scope) {
-        item.scope = data.scope;
+      if (data.userdata.scope) {
+        item.scope = data.userdata.scope;
       }
       console.log("Sending")
       return res.status(200).send();
@@ -246,6 +287,25 @@ router.put("/user", async function(req, res) {
 });
 router.post("/user", async function(req, res) {
   var data = req.body;
+  const userSchema = Joi.object({
+    username: Joi.string().required(),
+    password: Joi.string().required(),
+    scope: Joi.array().required()
+  })
+  const schema = Joi.object({
+    username: Joi.string().required(),
+    hash: Joi.string().required(),
+    userdata: Joi.object().schema(userSchema).required()
+  })
+  try{
+  await schema.validateAsync(data)
+  } catch(err) {
+    console.error(req.connection.remoteAddress,err)
+    return res.status(422).send(err)
+  }
+  if (!shared.Verify(data.username,data.hash)){
+    return res.status(403).send("Incorrect hash/username")
+  }
   var user = {};
   if (!process.env.DatabaseModes) {
       loginDetails.forEach(item =>{
@@ -253,16 +313,16 @@ router.post("/user", async function(req, res) {
               return res.status(403).send("Username Already Taken")
           }
       })
-    user.username = data.username;
+    user.username = data.userdata.username;
 
     user.password = tempPassword;
-    user.scope = data.scope;
+    user.scope = data.userdata.scope;
     user.id = length(loginDetails) - 1;
     loginDetails.push(user);
     return res.status(200).send();
   } else {
-    var tempPassword = bcrypt.hashSync(data.password, 6);
-    var values = [data.username, tempPassword, data.scope];
+    var tempPassword = bcrypt.hashSync(data.userdata.password, 6);
+    var values = [data.username, tempPassword, data.userdata.scope];
     const client = DatabaseConnect();
     await client
       .query(
@@ -279,6 +339,16 @@ router.post("/user", async function(req, res) {
 });
 router.post("/verify", async function(req, res) {
   var data = req.body;
+  const schema = Joi.object({
+    username: Joi.string().required(),
+    hash: Joi.string().required()
+  })
+  try{
+  await schema.validateAsync(data)
+  } catch(err) {
+    console.error(req.connection.remoteAddress,err)
+    return res.status(422).send(err)
+  }
 //   console.log(data);
   var checked = false;
   if (!process.env.DatabaseModes) {

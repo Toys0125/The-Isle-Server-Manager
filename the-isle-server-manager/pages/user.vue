@@ -175,9 +175,15 @@ export default {
       values.scope =
         this.scope == this.user.scope ? this.user.scope : this.scope;
       var self = this;
+      let loginDetails = this.$auth.$storage.getUniversal("auth", true)
+      let data = {
+        username: loginDetails.username,
+        hash: loginDetails.hash,
+        userdata: values
+      }
       if (this.valid) {
         axios
-          .put(backendURL + "/login/user", values)
+          .put(backendURL + "/login/user", data)
           .then(function(response) {
             self.$nuxt.$emit("showSnackbar", {
               color: "success",
@@ -208,9 +214,15 @@ export default {
         scope: this.scope
       };
       var self = this;
+      let loginDetails = this.$auth.$storage.getUniversal("auth", true)
+      let data = {
+        username: loginDetails.username,
+        hash: loginDetails.hash,
+        userdata: values
+      }
       if (this.valid) {
         axios
-          .post(backendURL + "/login/user", values)
+          .post(backendURL + "/login/user", data)
           .then(function(response) {
             self.$nuxt.$emit("showSnackbar", {
               color: "success",

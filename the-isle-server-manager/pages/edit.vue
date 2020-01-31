@@ -359,8 +359,14 @@ export default {
         "=" +
         this.zCords;
       this.valid = false;
+      let loginDetails = this.$auth.$storage.getUniversal("auth", true)
+      let dataFormat = {
+        username: loginDetails.username,
+        hash: loginDetails.hash,
+        file: newData
+      }
       await axios
-        .put(backendURL + "/steam/id/" + this.selectedSteam.steamid, newData)
+        .put(backendURL + "/steam/id/" + this.selectedSteam.steamid, dataFormat)
         .then(function(response) {
           self.$nuxt.$emit("showSnackbar", {
             color: "Success",
@@ -371,6 +377,7 @@ export default {
           valid = true;
         })
         .catch(function(error) {
+          console.error("Error in submiting dino to backend server",error)
           self.$nuxt.$emit("showSnackbar", {
             color: "error",
             text: "Error! Look at console log for more.",

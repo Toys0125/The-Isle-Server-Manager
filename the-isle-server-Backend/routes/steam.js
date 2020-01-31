@@ -4,6 +4,7 @@ const router = express.Router();
 const fs = require("fs");
 const axios = require("axios");
 const path = require("path");
+const Joi = require("@hapi/joi");
 
 const shared = require("../functions/shared");
 if (!process.env.SteamAPIKEY) {
@@ -23,11 +24,9 @@ router.use(function timeLog(req, res, next) {
   formattedTimer +=
     date.getHours() > 9 ? date.getHours() : "0" + date.getHours();
   formattedTimer +=
-    ":" +
-    (date.getMinutes() > 9 ? date.getMinutes() : "0" + date.getMinutes())
-    formattedTimer +=
-    ":" +
-    (date.getSeconds() > 9 ? date.getSeconds() : "0" + date.getSeconds());
+    ":" + (date.getMinutes() > 9 ? date.getMinutes() : "0" + date.getMinutes());
+  formattedTimer +=
+    ":" + (date.getSeconds() > 9 ? date.getSeconds() : "0" + date.getSeconds());
   console.log(formattedTimer, req.method, req.originalUrl);
   /* if (req.hostname == "localhost") {
     next();
@@ -114,6 +113,20 @@ router.get("/", async function(req, res) {
 });
 router.get("/id/:steamid", async function(req, res) {
   var steamid = req.params.steamid;
+  const schema = Joi.object({
+    steamid: Joi.number().required(),
+    username: Joi.string().required(),
+    hash: Joi.string().required()
+  });
+  try {
+    await schema.validateAsync({ steamid: steamid });
+  } catch (err) {
+    console.error(req.connection.remoteAddress, err);
+    return res.status(422).send(err);
+  }
+  if (!shared.Verify(data.username,data.hash)){
+    return res.status(403).send("Incorrect hash/username")
+  }
   var file = {};
   var stats = {};
   try {
@@ -121,7 +134,7 @@ router.get("/id/:steamid", async function(req, res) {
     var temp = shared.ReadSteamFile(steamid);
     file = temp[0];
     stats = temp[1];
-    console.log(stats)
+    console.log(stats);
   } catch (error) {
     console.error("Reading file errored", error);
     return res.status(500).send();
@@ -140,6 +153,46 @@ router.get("/id/:steamid", async function(req, res) {
 });
 router.put("/id/:steamid", async function(req, res) {
   var data = req.body;
+  const fileschema = Joi.object({
+    CharacterClass: Joi.string().required(),
+    DNA: Joi.string(),
+    Growth: Joi.string().required(),
+    Hunger: Joi.string().required(),
+    Thirst: Joi.string().required(),
+    Stamina: Joi.string().required(),
+    Health: Joi.string().required(),
+    BleedingRate: Joi.string().required(),
+    Oxygen: Joi.string().required(),
+    bGender: Joi.boolean().required(),
+    bIsResting: Joi.boolean().required(),
+    bBrokenLegs: Joi.boolean().required(),
+    ProgressionPoints: Joi.string().required(),
+    ProgressionTier: Joi.string().required(),
+    UnlockedCharacters: Joi.string().required(),
+    CameraRotation_Isle_V3: Joi.string(),
+    CameraDistance_Isle_V3: Joi.string(),
+    SkinPaletteSection1: Joi.number(),
+    SkinPaletteSection2: Joi.number(),
+    SkinPaletteSection3: Joi.number(),
+    SkinPaletteSection4: Joi.number(),
+    SkinPaletteSection5: Joi.number(),
+    SkinPaletteSection6: Joi.number(),
+    SkinPaletteVariation: Joi.string().required()
+  }).unknown(true);
+  const schema = Joi.object({
+    username: Joi.string().required(),
+    hash: Joi.string().required(),
+    file: Joi.object().schema(fileschema).required()
+  });
+  try {
+    await schema.validateAsync(data);
+  } catch (err) {
+    console.error(req.connection.remoteAddress, err);
+    return res.status(422).send(err);
+  }
+  if (!shared.Verify(data.username,data.hash)){
+    return res.status(403).send("Incorrect hash/username")
+  }
   // console.log(data)
   var steamid = req.params.steamid;
   try {
