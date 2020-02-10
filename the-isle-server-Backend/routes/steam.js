@@ -54,7 +54,7 @@ router.get("/", async function(req, res) {
     console.error(req.connection.remoteAddress, err);
     return res.status(422).send(err);
   }
-  if (!await shared.verify(authorization.username,authorization.hash)){
+  if (!await shared.Verify(authorization.username,authorization.hash)){
     return res.status(403).send("Incorrect hash/username")
   }
   if (!process.env.DataBaseMode) {
@@ -142,7 +142,7 @@ router.get("/id/:steamid", async function(req, res) {
     console.error(req.connection.remoteAddress, err);
     return res.status(422).send(err);
   }
-  if (!await shared.verify(authorization.username,authorization.hash)){
+  if (!await shared.Verify(authorization.username,authorization.hash)){
     return res.status(403).send("Incorrect hash/username")
   }
   var file = {};
@@ -211,7 +211,7 @@ router.put("/id/:steamid", async function(req, res) {
     console.error(req.connection.remoteAddress, err);
     return res.status(422).send(err);
   }
-  if (!await shared.verify(data.username,data.hash)){
+  if (!await shared.Verify(data.username,data.hash)){
     return res.status(403).send("Incorrect hash/username")
   }
   // console.log(data)

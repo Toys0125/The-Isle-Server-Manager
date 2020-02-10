@@ -190,7 +190,7 @@ router.use(function timeLog(req, res, next) {
 });
 router.get("/", async function(req, res) {
   var group = [];
-  var authorization = req.headers.authorization;
+  var authorization = JSON.parse(req.headers.authorization);
   const auth = Joi.object({
     username: Joi.string().required(),
     hash: Joi.string().required()
@@ -201,7 +201,7 @@ router.get("/", async function(req, res) {
     console.error(req.connection.remoteAddress, err);
     return res.status(422).send(err);
   }
-  if (!(await shared.verify(authorization.username, authorization.hash))) {
+  if (!(await shared.Verify(authorization.username, authorization.hash))) {
     return res.status(403).send("Incorrect hash/username");
   }
   loginDetails.forEach(item => {
@@ -255,7 +255,7 @@ router.post("/logout", async function(req, res) {
 router.put("/user", async function(req, res) {
   var data = req.body;
   // console.log(data)
-  var authorization = req.headers.authorization;
+  var authorization = JSON.parse(req.headers.authorization);
   const userSchema = Joi.object({
     id: Joi.number().required(),
     username: Joi.string(),
@@ -277,7 +277,7 @@ router.put("/user", async function(req, res) {
     console.error(req.connection.remoteAddress, err);
     return res.status(422).send(err);
   }
-  if (!(await shared.verify(data.username, data.hash))) {
+  if (!(await shared.Verify(data.username, data.hash))) {
     return res.status(403).send("Incorrect hash/username");
   }
   var checked = false;
@@ -304,8 +304,10 @@ router.put("/user", async function(req, res) {
 });
 router.post("/user", async function(req, res) {
   var data = req.body;
-  var authorization = req.headers.authorization;
-  const userSchema = Joi.object({
+  console.log(req.headers.authorization)
+  var authorization = JSON.parse(req.headers.authorization);
+  console.log(authorization)
+  const userSchema = Joi.object().keys({
     username: Joi.string().required(),
     password: Joi.string().required(),
     scope: Joi.array().required()
@@ -313,9 +315,7 @@ router.post("/user", async function(req, res) {
   const schema = Joi.object({
     username: Joi.string().required(),
     hash: Joi.string().required(),
-    userdata: Joi.object()
-      .schema(userSchema)
-      .required()
+    userdata: userSchema
   });
   data.username = authorization.username;
   data.hash = authorization.hash;
@@ -325,7 +325,7 @@ router.post("/user", async function(req, res) {
     console.error(req.connection.remoteAddress, err);
     return res.status(422).send(err);
   }
-  if (!(await shared.verify(data.username, data.hash))) {
+  if (!(await shared.Verify(data.username, data.hash))) {
     return res.status(403).send("Incorrect hash/username");
   }
   var user = {};

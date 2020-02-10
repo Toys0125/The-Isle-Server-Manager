@@ -225,10 +225,10 @@ export default {
       accesstime: "",
       axiosConfig: {
         headers: {
-          Authorization:{
+          Authorization: JSON.stringify({
             username: this.$auth.$storage.getUniversal("auth", true).username,
             hash: this.$auth.$storage.getUniversal("auth", true).hash
-          }
+          })
         }
       }
     };
@@ -255,7 +255,7 @@ export default {
       var self = this;
       var loginkey = this.$auth.$storage.getUniversal("auth", true);
       await axios
-        .get(backendURL + "/steam/",self.axiosConfig)
+        .get(backendURL + "/steam/", self.axiosConfig)
         .then(function(response) {
           // console.log(response);
           self.steamNames = response.data;
@@ -275,7 +275,10 @@ export default {
       var self = this;
       var loginkey = this.$auth.$storage.getUniversal("auth", true);
       await axios
-        .get(backendURL + "/steam/id/" + this.selectedSteam.steamid,self.axiosConfig)
+        .get(
+          backendURL + "/steam/id/" + this.selectedSteam.steamid,
+          self.axiosConfig
+        )
         .then(function(response) {
           self.playerData = response.data;
           self.setValues();
@@ -330,13 +333,14 @@ export default {
             ? ""
             : String(Math.floor((calc % 1440) / 60)) + " Hours ";
         string +=
-          Math.floor((calc % 1440)) == 0
+          Math.floor(calc % 1440) == 0
             ? ""
-            : String(Math.floor((calc % 1440)%60)) + " Mins";
+            : String(Math.floor((calc % 1440) % 60)) + " Mins";
         string += " Last Accessed";
         return string;
       } else {
-        let string = "Likely Online " + String(Math.round(dif/1000)) + " secs";
+        let string =
+          "Likely Online " + String(Math.round(dif / 1000)) + " secs";
         return string;
       }
     },
@@ -369,12 +373,16 @@ export default {
         "=" +
         this.zCords;
       this.valid = false;
-      let loginDetails = this.$auth.$storage.getUniversal("auth", true)
+      let loginDetails = this.$auth.$storage.getUniversal("auth", true);
       let dataFormat = {
         file: newData
-      }
+      };
       await axios
-        .put(backendURL + "/steam/id/" + this.selectedSteam.steamid, dataFormat, self.axiosConfig)
+        .put(
+          backendURL + "/steam/id/" + this.selectedSteam.steamid,
+          dataFormat,
+          self.axiosConfig
+        )
         .then(function(response) {
           self.$nuxt.$emit("showSnackbar", {
             color: "Success",
@@ -385,7 +393,7 @@ export default {
           valid = true;
         })
         .catch(function(error) {
-          console.error("Error in submiting dino to backend server",error)
+          console.error("Error in submiting dino to backend server", error);
           self.$nuxt.$emit("showSnackbar", {
             color: "error",
             text: "Error! Look at console log for more.",
@@ -395,22 +403,22 @@ export default {
     },
     reset() {
       this.$refs.form.reset();
-      this.accesstime = null
-      this.selectedSteam= "",
-      this.playerData= null,
-      this.selectedDino= "",
-      this.selectedGender= "Male",
-      this.selectedGenderCheck= false,
-      this.restingobj= { text: "Standing", check: false },
-      this.brokenlegobj= { text: "Not Broken", check: false },
-      this.growth= "",
-      this.xCords= "",
-      this.yCords= "",
-      this.zCords= "",
-      this.health= "",
-      this.valid= false,
-      this.proccessing= false,
-      this.accesstime= ""
+      this.accesstime = null;
+      (this.selectedSteam = ""),
+        (this.playerData = null),
+        (this.selectedDino = ""),
+        (this.selectedGender = "Male"),
+        (this.selectedGenderCheck = false),
+        (this.restingobj = { text: "Standing", check: false }),
+        (this.brokenlegobj = { text: "Not Broken", check: false }),
+        (this.growth = ""),
+        (this.xCords = ""),
+        (this.yCords = ""),
+        (this.zCords = ""),
+        (this.health = ""),
+        (this.valid = false),
+        (this.proccessing = false),
+        (this.accesstime = "");
     }
   }
 };

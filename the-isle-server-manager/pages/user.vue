@@ -142,12 +142,12 @@ export default {
       checkbox: false,
       axiosConfig: {
         headers: {
-          Authorization:{
+          Authorization: JSON.stringify({
             username: this.$auth.$storage.getUniversal("auth", true).username,
             hash: this.$auth.$storage.getUniversal("auth", true).hash
-          }
+          })
         }
-      },
+      }
     };
   },
   created() {
@@ -167,8 +167,8 @@ export default {
       setTimeout(3000);
       this.$router.push("/");
     }
-    if (this.MasterAccount()){
-      this.scopeList.push("Master")
+    if (this.MasterAccount()) {
+      this.scopeList.push("Master");
     }
   },
   methods: {
@@ -185,10 +185,10 @@ export default {
       var self = this;
       let data = {
         userdata: values
-      }
+      };
       if (this.valid) {
         axios
-          .put(backendURL + "/login/user", data,self.axiosConfig)
+          .put(backendURL + "/login/user", data, self.axiosConfig)
           .then(function(response) {
             self.$nuxt.$emit("showSnackbar", {
               color: "success",
@@ -221,7 +221,7 @@ export default {
       var self = this;
       let data = {
         userdata: values
-      }
+      };
       if (this.valid) {
         axios
           .post(backendURL + "/login/user", data, self.axiosConfig)
@@ -265,11 +265,11 @@ export default {
       this.proccessing = true;
       this.deleteDialog = false;
       var values = {
-        id: this.id,
+        id: this.id
       };
       var self = this;
       axios
-        .delete(backendURL + "/login", values,self.axiosConfig)
+        .delete(backendURL + "/login", values, self.axiosConfig)
         .then(function(response) {
           self.$nuxt.$emit("showSnackbar", {
             color: "success",
@@ -318,7 +318,7 @@ export default {
       this.proccessing = true;
       var self = this;
       axios
-        .get(backendURL + "/login",self.axiosConfig)
+        .get(backendURL + "/login", self.axiosConfig)
         .then(function(response) {
           self.users = response.data;
           self.proccessing = false;
