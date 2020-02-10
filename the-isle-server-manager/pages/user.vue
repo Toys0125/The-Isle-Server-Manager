@@ -139,7 +139,15 @@ export default {
       AdminAccount: false,
       proccessing: false,
       deleteDialog: false,
-      checkbox: false
+      checkbox: false,
+      axiosConfig: {
+        headers: {
+          Authorization:{
+            username: this.$auth.$storage.getUniversal("auth", true).username,
+            hash: this.$auth.$storage.getUniversal("auth", true).hash
+          }
+        }
+      },
     };
   },
   created() {
@@ -175,15 +183,12 @@ export default {
       values.scope =
         this.scope == this.user.scope ? this.user.scope : this.scope;
       var self = this;
-      let loginDetails = this.$auth.$storage.getUniversal("auth", true)
       let data = {
-        username: loginDetails.username,
-        hash: loginDetails.hash,
         userdata: values
       }
       if (this.valid) {
         axios
-          .put(backendURL + "/login/user", data)
+          .put(backendURL + "/login/user", data,self.axiosConfig)
           .then(function(response) {
             self.$nuxt.$emit("showSnackbar", {
               color: "success",
@@ -214,15 +219,12 @@ export default {
         scope: this.scope
       };
       var self = this;
-      let loginDetails = this.$auth.$storage.getUniversal("auth", true)
       let data = {
-        username: loginDetails.username,
-        hash: loginDetails.hash,
         userdata: values
       }
       if (this.valid) {
         axios
-          .post(backendURL + "/login/user", data)
+          .post(backendURL + "/login/user", data, self.axiosConfig)
           .then(function(response) {
             self.$nuxt.$emit("showSnackbar", {
               color: "success",
@@ -262,15 +264,12 @@ export default {
     Delete() {
       this.proccessing = true;
       this.deleteDialog = false;
-      var auth = this.$auth.$storage.getUniversal("auth");
       var values = {
         id: this.id,
-        username: auth.username,
-        hash: auth.hash
       };
       var self = this;
       axios
-        .delete(backendURL + "/login", values)
+        .delete(backendURL + "/login", values,self.axiosConfig)
         .then(function(response) {
           self.$nuxt.$emit("showSnackbar", {
             color: "success",
@@ -319,7 +318,7 @@ export default {
       this.proccessing = true;
       var self = this;
       axios
-        .get(backendURL + "/login")
+        .get(backendURL + "/login",self.axiosConfig)
         .then(function(response) {
           self.users = response.data;
           self.proccessing = false;

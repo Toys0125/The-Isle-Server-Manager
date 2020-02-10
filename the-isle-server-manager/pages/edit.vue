@@ -222,7 +222,15 @@ export default {
       health: "",
       valid: false,
       proccessing: false,
-      accesstime: ""
+      accesstime: "",
+      axiosConfig: {
+        headers: {
+          Authorization:{
+            username: this.$auth.$storage.getUniversal("auth", true).username,
+            hash: this.$auth.$storage.getUniversal("auth", true).hash
+          }
+        }
+      }
     };
   },
   created() {
@@ -245,8 +253,9 @@ export default {
     },
     async GatherSteamIds() {
       var self = this;
+      var loginkey = this.$auth.$storage.getUniversal("auth", true);
       await axios
-        .get(backendURL + "/steam/")
+        .get(backendURL + "/steam/",self.axiosConfig)
         .then(function(response) {
           // console.log(response);
           self.steamNames = response.data;
@@ -264,8 +273,9 @@ export default {
       this.proccessing = true;
       this.playerData = null;
       var self = this;
+      var loginkey = this.$auth.$storage.getUniversal("auth", true);
       await axios
-        .get(backendURL + "/steam/id/" + this.selectedSteam.steamid)
+        .get(backendURL + "/steam/id/" + this.selectedSteam.steamid,self.axiosConfig)
         .then(function(response) {
           self.playerData = response.data;
           self.setValues();
@@ -361,12 +371,10 @@ export default {
       this.valid = false;
       let loginDetails = this.$auth.$storage.getUniversal("auth", true)
       let dataFormat = {
-        username: loginDetails.username,
-        hash: loginDetails.hash,
         file: newData
       }
       await axios
-        .put(backendURL + "/steam/id/" + this.selectedSteam.steamid, dataFormat)
+        .put(backendURL + "/steam/id/" + this.selectedSteam.steamid, dataFormat, self.axiosConfig)
         .then(function(response) {
           self.$nuxt.$emit("showSnackbar", {
             color: "Success",

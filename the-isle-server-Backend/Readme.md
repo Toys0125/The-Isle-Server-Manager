@@ -61,6 +61,7 @@ Must be in json format
 
 ```
 // https://developer.valvesoftware.com/wiki/Steam_Web_API#GetPlayerSummaries_.28v0001.29
+ALL Request need Authorization Header with {username:<string>,hash: <string>}
 Get('/'){
     Send:{}
     Returns:{[{
@@ -145,6 +146,7 @@ Post('/'){
     }
     Returns:{}
 }
+ALL Request need Authorization Header with {username:<string>,hash: <string>}
 Put('/user'){
     Send:{
 		username: <string>,

@@ -43,6 +43,20 @@ router.get("/", async function(req, res) {
   // console.log(SavePath)
   // console.log(path.resolve(process.cwd(),SavePath))
   var entry = [];
+  var authorization = req.headers.authorization
+  const auth = Joi.object({
+    username: Joi.string().required(),
+    hash: Joi.string().required()
+  })
+  try {
+    await auth.validateAsync(authorization)
+  } catch (err) {
+    console.error(req.connection.remoteAddress, err);
+    return res.status(422).send(err);
+  }
+  if (!await shared.verify(authorization.username,authorization.hash)){
+    return res.status(403).send("Incorrect hash/username")
+  }
   if (!process.env.DataBaseMode) {
     try {
       entry = fs.readdirSync(path.resolve(process.cwd(), SavePath));
@@ -113,18 +127,22 @@ router.get("/", async function(req, res) {
 });
 router.get("/id/:steamid", async function(req, res) {
   var steamid = req.params.steamid;
-  const schema = Joi.object({
+  const steamid = Joi.object({
     steamid: Joi.string().required(),
+  });
+  var authorization = req.headers.authorization
+  const auth = Joi.object({
     username: Joi.string().required(),
     hash: Joi.string().required()
-  });
+  })
   try {
-    await schema.validateAsync({ steamid: steamid });
+    await steamid.validateAsync({ steamid: steamid });
+    await auth.validateAsync(authorization)
   } catch (err) {
     console.error(req.connection.remoteAddress, err);
     return res.status(422).send(err);
   }
-  if (!await shared.verify(data.username,data.hash)){
+  if (!await shared.verify(authorization.username,authorization.hash)){
     return res.status(403).send("Incorrect hash/username")
   }
   var file = {};
@@ -153,6 +171,7 @@ router.get("/id/:steamid", async function(req, res) {
 });
 router.put("/id/:steamid", async function(req, res) {
   var data = req.body;
+  var authorization = req.headers.authorization;
   const fileschema = Joi.object({
     CharacterClass: Joi.string().required(),
     DNA: Joi.string(),
@@ -184,6 +203,8 @@ router.put("/id/:steamid", async function(req, res) {
     hash: Joi.string().required(),
     file: Joi.object().schema(fileschema).required()
   });
+  data.username = authorization.username
+  data.hash = authorization.hash
   try {
     await schema.validateAsync(data);
   } catch (err) {

@@ -6,7 +6,7 @@ const bcrypt = require("bcrypt");
 const crypto = require("crypto");
 //const axios = require('axios')
 const path = require("path");
-const Joi = require('@hapi/joi')
+const Joi = require("@hapi/joi");
 const shared = require("../functions/shared");
 global.loginDetails = null;
 if (!process.env.DatabaseModes) {
@@ -173,11 +173,9 @@ router.use(function timeLog(req, res, next) {
   formattedTimer +=
     date.getHours() > 9 ? date.getHours() : "0" + date.getHours();
   formattedTimer +=
-    ":" +
-    (date.getMinutes() > 9 ? date.getMinutes() : "0" + date.getMinutes())
-    formattedTimer +=
-    ":" +
-    (date.getSeconds() > 9 ? date.getSeconds() : "0" + date.getSeconds());
+    ":" + (date.getMinutes() > 9 ? date.getMinutes() : "0" + date.getMinutes());
+  formattedTimer +=
+    ":" + (date.getSeconds() > 9 ? date.getSeconds() : "0" + date.getSeconds());
   console.log(formattedTimer, req.method, req.originalUrl);
   /* if (
     req.hostname == process.env.FrontEndHostName
@@ -188,86 +186,105 @@ router.use(function timeLog(req, res, next) {
   } else {
     return res.status(403).send("Incorrect origin");
   } */
-  next()
+  next();
 });
-router.get('/',async function(req,res){
-    var group = []
-    loginDetails.forEach(item =>{
-        var temp = {
-            username: item.username,
-            id: item.id,
-            scope: item.scope
-        }
-        group.push(temp)
-    })
-    res.status(200).send(group)
-})
+router.get("/", async function(req, res) {
+  var group = [];
+  var authorization = req.headers.authorization;
+  const auth = Joi.object({
+    username: Joi.string().required(),
+    hash: Joi.string().required()
+  });
+  try {
+    await auth.validateAsync(authorization);
+  } catch (err) {
+    console.error(req.connection.remoteAddress, err);
+    return res.status(422).send(err);
+  }
+  if (!(await shared.verify(authorization.username, authorization.hash))) {
+    return res.status(403).send("Incorrect hash/username");
+  }
+  loginDetails.forEach(item => {
+    var temp = {
+      username: item.username,
+      id: item.id,
+      scope: item.scope
+    };
+    group.push(temp);
+  });
+  res.status(200).send(group);
+});
 router.post("/", async function(req, res) {
   var data = req.body;
   const schema = Joi.object({
     username: Joi.string().required(),
     password: Joi.string().required()
-  })
-  try{
-  await schema.validateAsync(data)
-  } catch(err) {
-    console.error(req.connection.remoteAddress,err)
-    return res.status(422).send(err)
+  });
+  try {
+    await schema.validateAsync(data);
+  } catch (err) {
+    console.error(req.connection.remoteAddress, err);
+    return res.status(422).send(err);
   }
   // console.log(data)
   return Login(data.username, data.password, res); // Response is handled in Login Function.
 });
-router.post("/logout",async function(req,res){
-  var data = req.body
+router.post("/logout", async function(req, res) {
+  var data = req.body;
   const schema = Joi.object({
     username: Joi.string().required()
-  })
-  try{
-  await schema.validateAsync(data)
-  } catch(err) {
-    console.error(req.connection.remoteAddress,err)
-    return res.status(422).send(err)
+  });
+  try {
+    await schema.validateAsync(data);
+  } catch (err) {
+    console.error(req.connection.remoteAddress, err);
+    return res.status(422).send(err);
   }
-  var checked = false
+  var checked = false;
   loginDetails.forEach(item => {
-    if (item.username == data.username){
-      checked = true
-      item.hash = null
-      return res.status(200).send()
+    if (item.username == data.username) {
+      checked = true;
+      item.hash = null;
+      return res.status(200).send();
     }
-  })
-  if (!checked){
-    return res.status(404).send()
+  });
+  if (!checked) {
+    return res.status(404).send();
   }
-})
+});
 router.put("/user", async function(req, res) {
   var data = req.body;
-  // console.log(data) 
+  // console.log(data)
+  var authorization = req.headers.authorization;
   const userSchema = Joi.object({
     id: Joi.number().required(),
     username: Joi.string(),
     password: Joi.string(),
     scope: Joi.array()
-  })
+  });
   const schema = Joi.object({
     username: Joi.string().required(),
     hash: Joi.string().required(),
-    userdata: Joi.object().schema(userSchema).required()
-  })
-  try{
-  await schema.validateAsync(data)
-  } catch(err) {
-    console.error(req.connection.remoteAddress,err)
-    return res.status(422).send(err)
+    userdata: Joi.object()
+      .schema(userSchema)
+      .required()
+  });
+  data.username = authorization.username;
+  data.hash = authorization.hash;
+  try {
+    await schema.validateAsync(data);
+  } catch (err) {
+    console.error(req.connection.remoteAddress, err);
+    return res.status(422).send(err);
   }
-  if (!await shared.verify(data.username,data.hash)){
-    return res.status(403).send("Incorrect hash/username")
+  if (!(await shared.verify(data.username, data.hash))) {
+    return res.status(403).send("Incorrect hash/username");
   }
-  var checked = false
+  var checked = false;
   loginDetails.forEach(item => {
-    console.log(item)
+    console.log(item);
     if (item.id == data.userdata.id) {
-      checked = true
+      checked = true;
       if (data.userdata.username) {
         item.username = data.userdata.username;
       }
@@ -277,42 +294,47 @@ router.put("/user", async function(req, res) {
       if (data.userdata.scope) {
         item.scope = data.userdata.scope;
       }
-      console.log("Sending")
+      console.log("Sending");
       return res.status(200).send();
     }
   });
-  if (!checked){
-  return res.status(404).send();
+  if (!checked) {
+    return res.status(404).send();
   }
 });
 router.post("/user", async function(req, res) {
   var data = req.body;
+  var authorization = req.headers.authorization;
   const userSchema = Joi.object({
     username: Joi.string().required(),
     password: Joi.string().required(),
     scope: Joi.array().required()
-  })
+  });
   const schema = Joi.object({
     username: Joi.string().required(),
     hash: Joi.string().required(),
-    userdata: Joi.object().schema(userSchema).required()
-  })
-  try{
-  await schema.validateAsync(data)
-  } catch(err) {
-    console.error(req.connection.remoteAddress,err)
-    return res.status(422).send(err)
+    userdata: Joi.object()
+      .schema(userSchema)
+      .required()
+  });
+  data.username = authorization.username;
+  data.hash = authorization.hash;
+  try {
+    await schema.validateAsync(data);
+  } catch (err) {
+    console.error(req.connection.remoteAddress, err);
+    return res.status(422).send(err);
   }
-  if (!await shared.verify(data.username,data.hash)){
-    return res.status(403).send("Incorrect hash/username")
+  if (!(await shared.verify(data.username, data.hash))) {
+    return res.status(403).send("Incorrect hash/username");
   }
   var user = {};
   if (!process.env.DatabaseModes) {
-      loginDetails.forEach(item =>{
-          if (item.username == data.username){
-              return res.status(403).send("Username Already Taken")
-          }
-      })
+    loginDetails.forEach(item => {
+      if (item.username == data.username) {
+        return res.status(403).send("Username Already Taken");
+      }
+    });
     user.username = data.userdata.username;
 
     user.password = tempPassword;
@@ -342,18 +364,18 @@ router.post("/verify", async function(req, res) {
   const schema = Joi.object({
     username: Joi.string().required(),
     hash: Joi.string().required()
-  })
-  try{
-  await schema.validateAsync(data)
-  } catch(err) {
-    console.error(req.connection.remoteAddress,err)
-    return res.status(422).send(err)
+  });
+  try {
+    await schema.validateAsync(data);
+  } catch (err) {
+    console.error(req.connection.remoteAddress, err);
+    return res.status(422).send(err);
   }
-//   console.log(data);
+  //   console.log(data);
   var checked = false;
   if (!process.env.DatabaseModes) {
     loginDetails.forEach(item => {
-    //   console.log(item);
+      //   console.log(item);
       if (item.username == data.username) {
         checked = true;
         try {
