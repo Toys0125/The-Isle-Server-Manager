@@ -127,7 +127,7 @@ router.get("/", async function(req, res) {
 });
 router.get("/id/:steamid", async function(req, res) {
   var steamid = req.params.steamid;
-  const steamid = Joi.object({
+  const data = Joi.object({
     steamid: Joi.string().required(),
   });
   var authorization = req.headers.authorization
@@ -136,7 +136,7 @@ router.get("/id/:steamid", async function(req, res) {
     hash: Joi.string().required()
   })
   try {
-    await steamid.validateAsync({ steamid: steamid });
+    await data.validateAsync({ steamid: steamid });
     await auth.validateAsync(authorization)
   } catch (err) {
     console.error(req.connection.remoteAddress, err);
