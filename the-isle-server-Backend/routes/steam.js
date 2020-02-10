@@ -114,7 +114,7 @@ router.get("/", async function(req, res) {
 router.get("/id/:steamid", async function(req, res) {
   var steamid = req.params.steamid;
   const schema = Joi.object({
-    steamid: Joi.number().required(),
+    steamid: Joi.string().required(),
     username: Joi.string().required(),
     hash: Joi.string().required()
   });
