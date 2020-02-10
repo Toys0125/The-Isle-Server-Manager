@@ -265,9 +265,7 @@ router.put("/user", async function(req, res) {
   const schema = Joi.object({
     username: Joi.string().required(),
     hash: Joi.string().required(),
-    userdata: Joi.object()
-      .schema(userSchema)
-      .required()
+    userdata: userSchema.required()
   });
   data.username = authorization.username;
   data.hash = authorization.hash;
@@ -315,7 +313,7 @@ router.post("/user", async function(req, res) {
   const schema = Joi.object({
     username: Joi.string().required(),
     hash: Joi.string().required(),
-    userdata: userSchema
+    userdata: userSchema.required()
   });
   data.username = authorization.username;
   data.hash = authorization.hash;

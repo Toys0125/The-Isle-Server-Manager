@@ -43,7 +43,7 @@ router.get("/", async function(req, res) {
   // console.log(SavePath)
   // console.log(path.resolve(process.cwd(),SavePath))
   var entry = [];
-  var authorization = req.headers.authorization
+  var authorization = JSON.parse(req.headers.authorization)
   const auth = Joi.object({
     username: Joi.string().required(),
     hash: Joi.string().required()
@@ -130,7 +130,7 @@ router.get("/id/:steamid", async function(req, res) {
   const data = Joi.object({
     steamid: Joi.string().required(),
   });
-  var authorization = req.headers.authorization
+  var authorization = JSON.parse(req.headers.authorization)
   const auth = Joi.object({
     username: Joi.string().required(),
     hash: Joi.string().required()
@@ -171,7 +171,7 @@ router.get("/id/:steamid", async function(req, res) {
 });
 router.put("/id/:steamid", async function(req, res) {
   var data = req.body;
-  var authorization = req.headers.authorization;
+  var authorization = JSON.parse(req.headers.authorization)
   const fileschema = Joi.object({
     CharacterClass: Joi.string().required(),
     DNA: Joi.string(),
@@ -201,7 +201,7 @@ router.put("/id/:steamid", async function(req, res) {
   const schema = Joi.object({
     username: Joi.string().required(),
     hash: Joi.string().required(),
-    file: Joi.object().schema(fileschema).required()
+    file: fileschema.required()
   });
   data.username = authorization.username
   data.hash = authorization.hash
