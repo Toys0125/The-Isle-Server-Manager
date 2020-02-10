@@ -20,28 +20,32 @@ module.exports = {
         }
     },
     Verify:async function(username,hash){
+      // console.log("verfying user",username,hash)
         if (!process.env.DatabaseModes) {
-            loginDetails.forEach(item => {
-            //   console.log(item);
+          console.log("Checking user")
+            for(let i=0;i<loginDetails.length;i++) {
+              let item = loginDetails[i]
               if (item.username == username) {
+                console.log("correct username")
                 checked = true;
                 // console.debug(item.hash == data.hash);
                 // console.debug(item.hash, data.hash);
                 if (item.hash == hash) {
                   return true;
                 } else {
+                  console.log("Hash does not match", item.hash, hash)
                   return false;
                 }
               }
-            });
+            };
             if (!checked) {
-              console.error("No Username found/incorrect username", data);
+              console.error("No Username found/incorrect username", username,hash);
               return false;
             }
           } else {
             const client = DatabaseConnect();
             var results = await client
-              .query("select * from Users where username = ?;", data.username)
+              .query("select * from Users where username = ?;", username)
               .catch(function(error) {
                 client.release();
                 console.error(error);
@@ -52,7 +56,7 @@ module.exports = {
               return false;
             }
             client.release();
-            if (results[0].hash == data.hash) {
+            if (results[0].hash == hash) {
               return true;
             } else {
               return false;

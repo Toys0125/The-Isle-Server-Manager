@@ -237,6 +237,7 @@ export default {
           .catch(function(error) {
             var bool = true;
             if (error.response.status == 403) {
+              console.log(error.response)
               if (error.response.body == "Username Already Taken") {
                 bool = false;
                 self.$nuxt.$emit("showSnackbar", {
@@ -280,7 +281,7 @@ export default {
           self.proccessing = false;
         })
         .catch(function(error) {
-          console.error("Deleting user", error);
+          console.error("Deleting user", error.response);
           self.$nuxt.$emit("showSnackbar", {
             color: "error",
             text: "Error! Look at console log for more.",
@@ -324,7 +325,7 @@ export default {
           self.proccessing = false;
         })
         .catch(function(error) {
-          console.error("Get Users", error);
+          console.error("Get Users", error.response);
           self.$nuxt.$emit("showSnackbar", {
             color: "error",
             text: "Error! Look at console log for more.",

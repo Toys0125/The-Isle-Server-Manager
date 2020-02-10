@@ -261,7 +261,7 @@ export default {
           self.steamNames = response.data;
         })
         .catch(function(err) {
-          console.error("GatherSteamIds errored with ", err);
+          console.error("GatherSteamIds errored with ", err.response);
           self.$nuxt.$emit("showSnackbar", {
             color: "error",
             text: "Error! Look at console log for more.",
@@ -285,7 +285,7 @@ export default {
           self.proccessing = false;
         })
         .catch(function(error) {
-          console.error("GatherPlayerdata", error);
+          console.error("GatherPlayerdata", error.response);
           self.$nuxt.$emit("showSnackbar", {
             color: "error",
             text: "Error! Look at console log for more.",
@@ -393,7 +393,7 @@ export default {
           valid = true;
         })
         .catch(function(error) {
-          console.error("Error in submiting dino to backend server", error);
+          console.error("Error in submiting dino to backend server", error.response);
           self.$nuxt.$emit("showSnackbar", {
             color: "error",
             text: "Error! Look at console log for more.",

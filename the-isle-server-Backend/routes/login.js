@@ -329,15 +329,16 @@ router.post("/user", async function(req, res) {
   var user = {};
   if (!process.env.DatabaseModes) {
     loginDetails.forEach(item => {
-      if (item.username == data.username) {
+      if (item.username == data.userdata.username) {
+        console.log("Username Already Taken", username)
         return res.status(403).send("Username Already Taken");
       }
     });
     user.username = data.userdata.username;
-
+    var tempPassword = bcrypt.hashSync(data.userdata.password,6)
     user.password = tempPassword;
     user.scope = data.userdata.scope;
-    user.id = length(loginDetails) - 1;
+    user.id = loginDetails.length - 1;
     loginDetails.push(user);
     return res.status(200).send();
   } else {

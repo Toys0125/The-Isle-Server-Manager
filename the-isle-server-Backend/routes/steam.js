@@ -55,6 +55,7 @@ router.get("/", async function(req, res) {
     return res.status(422).send(err);
   }
   if (!await shared.Verify(authorization.username,authorization.hash)){
+    console.log("Incorrect hash/username")
     return res.status(403).send("Incorrect hash/username")
   }
   if (!process.env.DataBaseMode) {
