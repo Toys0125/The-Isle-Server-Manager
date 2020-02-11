@@ -336,7 +336,16 @@ router.post("/user", async function(req, res) {
     user.scope = data.userdata.scope;
     user.id = loginDetails.length - 1;
     loginDetails.push(user);
-    return res.status(200).send();
+    await writeLoginFile().then(function(code){
+      if (code !=10){
+        console.log("Added",data.userdata.username,"to loginDetails")
+        return res.status(200).send();
+      } else{
+        console.log("Error in writing file for",data.userdata.username)
+        return res.status(500)
+      }
+    })
+    
   } else {
     var tempPassword = bcrypt.hashSync(data.userdata.password, 6);
     var values = [data.username, tempPassword, data.userdata.scope];
