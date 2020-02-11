@@ -153,7 +153,7 @@ router.get("/id/:steamid", async function(req, res) {
     var temp = shared.ReadSteamFile(steamid);
     file = temp[0];
     stats = temp[1];
-    console.log(stats);
+    // console.log(stats);
   } catch (error) {
     console.error("Reading file errored", error);
     return res.status(500).send();

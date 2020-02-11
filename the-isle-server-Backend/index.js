@@ -2,10 +2,18 @@ var express = require ("express")
 var app = express();
 var dotenv = require("dotenv")
 var fs = require("fs")
+var path = require('path')
 var cors = require("cors")
 app.use(cors())
 app.use(express.json())
 dotenv.config()
+var key =fs.existsSync(fs.readdirSync(path.resolve(process.cwd(),'../').filter(item =>item.endsWith('.key'))))==true?fs.readFileSync(path.resolve(process.cwd(),fs.readdirSync(path.resolve(process.cwd(),'../').filter(item =>item.endsWith('.key'))))):null,
+var cert = fs.existsSync(fs.readdirSync(path.resolve(process.cwd(),'../').filter(item =>item.endsWith('.pem'))))==true?fs.readFileSync(path.resolve(process.cwd(),fs.readdirSync(path.resolve(process.cwd(),'../').filter(item =>item.endsWith('.pem'))))):null
+var credentials = {
+    key:key,
+    cert:cert
+}
+var https = key&&cert?require('https'):null
 var steamRouter = require('./routes/steam')
 var loginRouter = require('./routes/login')
 var userRouter = require('./routes/user')
@@ -65,7 +73,7 @@ if (process.env.DatabaseModes){
         global.DatabaseConnect = function(config){return pool.connect(config)}
     }
 }
-fs.readFile(process.cwd()+"/config.cfg",function(err,contents){
+fs.readFile(path.resolve(process.cwd(),"config.cfg"),function(err,contents){
     if (err){
         console.error(err)
         throw "Missing config.cfg"
@@ -75,7 +83,9 @@ fs.readFile(process.cwd()+"/config.cfg",function(err,contents){
     var path = require('path')
     console.log("Is this the correct path to your saves",path.resolve(process.cwd(),SavePath))
 })
-app.listen(process.env.PORT,()=>{
+https!=null?app.listen(process.env.PORT,()=>{
     console.log("Server running on port",process.env.PORT)
+}):https.createServer(credentials,app).listen(process.env.PORT,()=>{
+    console.log("Server is Running HTTPS on port",process.env.PORT)
 })
 module.exports = app;

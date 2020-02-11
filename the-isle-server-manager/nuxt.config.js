@@ -1,5 +1,7 @@
 import colors from 'vuetify/es5/util/colors'
 require('dotenv').config()
+import fs from 'fs'
+import path from 'path'
 export default {
   mode: 'universal',
   /*
@@ -93,7 +95,11 @@ export default {
   },
   server: {
     port: process.env.PORT, // default: 3000
-    host: process.env.HOST // default: localhost
+    host: process.env.HOST, // default: localhost
+    https:{
+      key: fs.existsSync(fs.readdirSync(path.resolve(process.cwd(),'../').filter(item =>item.endsWith('.key'))))==true?fs.readFileSync(path.resolve(process.cwd(),fs.readdirSync(path.resolve(process.cwd(),'../').filter(item =>item.endsWith('.key'))))):null,
+      cert: fs.existsSync(fs.readdirSync(path.resolve(process.cwd(),'../').filter(item =>item.endsWith('.crt'))))==true?fs.readFileSync(path.resolve(process.cwd(),fs.readdirSync(path.resolve(process.cwd(),'../').filter(item =>item.endsWith('.crt'))))):null
+    }
   },
   vue: {
     config: {
