@@ -70,48 +70,46 @@ async function Login(username, password, res) {
   var stats = {};
   var checked = false;
   if (!process.env.DatabaseModes) {
-    console.debug(loginDetails)
-    await new Promise(function(resolve, reject) {
-      try {
-        loginDetails.forEach(item => {
-          console.debug(item);
-          if (item.username == username) {
-            checked = true;
-            return resolve(
-              bcrypt
-                .compare(password, item.password)
-                .then(async function(bresponse) {
-                  if (!bresponse) {
-                    console.debug("Incorrect Password");
-                    return res.status(401).send("Incorrect username/password");
+    try {
+      for (let i = 0; i < loginDetails.length; i++) {
+        item = loginDetails[i];
+        console.debug(item);
+        if (item.username == username) {
+          checked = true;
+          return resolve(
+            bcrypt
+              .compare(password, item.password)
+              .then(async function(bresponse) {
+                if (!bresponse) {
+                  console.debug("Incorrect Password");
+                  return res.status(401).send("Incorrect username/password");
+                }
+                var hash = crypto.randomBytes(20).toString("hex");
+                item.hash = hash;
+                var time = Date.now() + 3600000;
+                time = new Date(time).toISOString();
+                item.time = time;
+                stats.token = hash;
+                await writeLoginFile().then(code => {
+                  if (code != 10) {
+                    console.log("Written to File");
+                    res.json({
+                      hash: hash,
+                      scope: item.scope
+                    });
+                    return res.status(200);
+                  } else {
+                    return res.status(500).send("Internal Server Error!");
                   }
-                  var hash = crypto.randomBytes(20).toString("hex");
-                  item.hash = hash;
-                  var time = Date.now() + 3600000;
-                  time = new Date(time).toISOString();
-                  item.time = time;
-                  stats.token = hash;
-                  await writeLoginFile().then(code => {
-                    if (code != 10) {
-                      console.log("Written to File");
-                      res.json({
-                        hash: hash,
-                        scope: item.scope
-                      });
-                      return res.status(200);
-                    } else {
-                      return res.status(500).send("Internal Server Error!");
-                    }
-                  });
-                })
-            );
-          }
-        });
-      } catch (error) {
-        console.error(error);
-        return error ? reject(error) : null;
+                });
+              })
+          );
+        }
       }
-    });
+    } catch (error) {
+      console.error(error);
+      return error ? reject(error) : null;
+    }
     if (!checked) {
       console.debug("Incorrect username");
       return res.status(401).send("Incorrect username/password");
@@ -302,9 +300,9 @@ router.put("/user", async function(req, res) {
 });
 router.post("/user", async function(req, res) {
   var data = req.body;
-  console.log(req.headers.authorization)
+  console.log(req.headers.authorization);
   var authorization = JSON.parse(req.headers.authorization);
-  console.log(authorization)
+  console.log(authorization);
   const userSchema = Joi.object().keys({
     username: Joi.string().required(),
     password: Joi.string().required(),
@@ -330,12 +328,12 @@ router.post("/user", async function(req, res) {
   if (!process.env.DatabaseModes) {
     loginDetails.forEach(item => {
       if (item.username == data.userdata.username) {
-        console.log("Username Already Taken", username)
+        console.log("Username Already Taken", username);
         return res.status(403).send("Username Already Taken");
       }
     });
     user.username = data.userdata.username;
-    var tempPassword = bcrypt.hashSync(data.userdata.password,6)
+    var tempPassword = bcrypt.hashSync(data.userdata.password, 6);
     user.password = tempPassword;
     user.scope = data.userdata.scope;
     user.id = loginDetails.length - 1;
