@@ -76,34 +76,32 @@ async function Login(username, password, res) {
         console.debug(item);
         if (item.username == username) {
           checked = true;
-          return resolve(
-            bcrypt
-              .compare(password, item.password)
-              .then(async function(bresponse) {
-                if (!bresponse) {
-                  console.debug("Incorrect Password");
-                  return res.status(401).send("Incorrect username/password");
+          return bcrypt
+            .compare(password, item.password)
+            .then(async function(bresponse) {
+              if (!bresponse) {
+                console.debug("Incorrect Password");
+                return res.status(401).send("Incorrect username/password");
+              }
+              var hash = crypto.randomBytes(20).toString("hex");
+              item.hash = hash;
+              var time = Date.now() + 3600000;
+              time = new Date(time).toISOString();
+              item.time = time;
+              stats.token = hash;
+              await writeLoginFile().then(code => {
+                if (code != 10) {
+                  console.log("Written to File");
+                  res.json({
+                    hash: hash,
+                    scope: item.scope
+                  });
+                  return res.status(200);
+                } else {
+                  return res.status(500).send("Internal Server Error!");
                 }
-                var hash = crypto.randomBytes(20).toString("hex");
-                item.hash = hash;
-                var time = Date.now() + 3600000;
-                time = new Date(time).toISOString();
-                item.time = time;
-                stats.token = hash;
-                await writeLoginFile().then(code => {
-                  if (code != 10) {
-                    console.log("Written to File");
-                    res.json({
-                      hash: hash,
-                      scope: item.scope
-                    });
-                    return res.status(200);
-                  } else {
-                    return res.status(500).send("Internal Server Error!");
-                  }
-                });
-              })
-          );
+              });
+            });
         }
       }
     } catch (error) {
