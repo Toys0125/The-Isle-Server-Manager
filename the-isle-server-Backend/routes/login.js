@@ -70,7 +70,7 @@ async function Login(username, password, res) {
   var stats = {};
   var checked = false;
   if (!process.env.DatabaseModes) {
-    // console.debug(loginDetails)
+    console.debug(loginDetails)
     await new Promise(function(resolve, reject) {
       try {
         loginDetails.forEach(item => {
