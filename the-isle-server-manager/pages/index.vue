@@ -53,7 +53,7 @@
           <dir v-else>
             <v-btn color="primary" nuxt to="/edit">Edit Players </v-btn>
             <dir v-if="isAdminAccount()">
-              <v-btn color="primary" nuxt to="/users"
+              <v-btn color="primary" nuxt to="/user"
                 >Edit Management Accounts
               </v-btn>
             </dir>
