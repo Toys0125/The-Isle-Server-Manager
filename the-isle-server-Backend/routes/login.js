@@ -324,12 +324,13 @@ router.post("/user", async function(req, res) {
   }
   var user = {};
   if (!process.env.DatabaseModes) {
-    loginDetails.forEach(item => {
+    for (let i = 0;i<loginDetails.length;i++){
+      item = loginDetails[i]
       if (item.username == data.userdata.username) {
         console.log("Username Already Taken", username);
         return res.status(403).send("Username Already Taken");
       }
-    });
+    };
     user.username = data.userdata.username;
     var tempPassword = bcrypt.hashSync(data.userdata.password, 6);
     user.password = tempPassword;
@@ -342,7 +343,7 @@ router.post("/user", async function(req, res) {
         return res.status(200).send();
       } else{
         console.log("Error in writing file for",data.userdata.username)
-        return res.status(500)
+        return res.status(500).send()
       }
     })
     
