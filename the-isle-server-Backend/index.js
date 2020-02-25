@@ -19,12 +19,12 @@ var credentials = {
     key:key,
     cert:cert
 }
-console.log(key,cert,"Key or Cert Are true or null")
-console.log(fs.readdirSync(path.resolve(process.cwd(),'../')).filter(item =>item.endsWith('.pem')&&item.includes("key")))
-console.log(fs.readdirSync(path.resolve(process.cwd(),'../')).filter(item =>item.endsWith('.pem')&&item.includes("key")).length)
+// console.log(key,cert,"Key or Cert Are true or null")
+// console.log(fs.readdirSync(path.resolve(process.cwd(),'../')).filter(item =>item.endsWith('.pem')&&item.includes("key")))
+// console.log(fs.readdirSync(path.resolve(process.cwd(),'../')).filter(item =>item.endsWith('.pem')&&item.includes("key")).length)
 
-console.log(fs.readdirSync(path.resolve(process.cwd(),'../')).filter(item =>item.endsWith('.pem')&&item.includes("key")).length>0?true:false)
-console.log(path.resolve(process.cwd(),'../'+fs.readdirSync(path.resolve(process.cwd(),'../')).filter(item =>item.endsWith('.crt'))))
+// console.log(fs.readdirSync(path.resolve(process.cwd(),'../')).filter(item =>item.endsWith('.pem')&&item.includes("key")).length>0?true:false)
+// console.log(path.resolve(process.cwd(),'../'+fs.readdirSync(path.resolve(process.cwd(),'../')).filter(item =>item.endsWith('.crt'))))
 // console.log(fs.readFileSync(path.resolve(process.cwd(),'../'+fs.readdirSync(path.resolve(process.cwd(),'../')).filter(item =>item.endsWith('.key')))))
 var https = key&&cert?require('https'):null
 var steamRouter = require('./routes/steam')
