@@ -13,6 +13,7 @@ var credentials = {
     key:key,
     cert:cert
 }
+console.log(key,cert,"Key or Cert Are true or null")
 var https = key&&cert?require('https'):null
 var steamRouter = require('./routes/steam')
 var loginRouter = require('./routes/login')
