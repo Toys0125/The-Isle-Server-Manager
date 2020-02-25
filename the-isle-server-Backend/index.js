@@ -7,8 +7,8 @@ var cors = require("cors")
 app.use(cors())
 app.use(express.json())
 dotenv.config()
-var key= fs.readdirSync(path.resolve(process.cwd(),'../')).filter(item =>item.endsWith('.pem')&&item.includes("key")).length>1?fs.readFileSync(path.resolve(process.cwd(),'../'+fs.readdirSync(path.resolve(process.cwd(),'../')).filter(item =>item.endsWith('.key')))):null
-var cert= fs.readdirSync(path.resolve(process.cwd(),'../')).filter(item =>item.endsWith('.pem')&&item.includes("crt")).length>1?fs.readFileSync(path.resolve(process.cwd(),'../'+fs.readdirSync(path.resolve(process.cwd(),'../')).filter(item =>item.endsWith('.crt')))):null
+var key= fs.readdirSync(path.resolve(process.cwd(),'../')).filter(item =>item.endsWith('.pem')&&item.includes("key")).length>0?fs.readFileSync(path.resolve(process.cwd(),'../'+fs.readdirSync(path.resolve(process.cwd(),'../')).filter(item =>item.endsWith('.key')))):null
+var cert= fs.readdirSync(path.resolve(process.cwd(),'../')).filter(item =>item.endsWith('.pem')&&item.includes("crt")).length>0?fs.readFileSync(path.resolve(process.cwd(),'../'+fs.readdirSync(path.resolve(process.cwd(),'../')).filter(item =>item.endsWith('.crt')))):null
 var credentials = {
     key:key,
     cert:cert
@@ -17,7 +17,7 @@ console.log(key,cert,"Key or Cert Are true or null")
 console.log(fs.readdirSync(path.resolve(process.cwd(),'../')).filter(item =>item.endsWith('.pem')&&item.includes("key")))
 console.log(fs.readdirSync(path.resolve(process.cwd(),'../')).filter(item =>item.endsWith('.pem')&&item.includes("key")).length)
 
-console.log(fs.readdirSync(path.resolve(process.cwd(),'../')).filter(item =>item.endsWith('.pem')&&item.includes("key")).length>1?true:false)
+console.log(fs.readdirSync(path.resolve(process.cwd(),'../')).filter(item =>item.endsWith('.pem')&&item.includes("key")).length>0?true:false)
 console.log(path.resolve(process.cwd(),'../'+fs.readdirSync(path.resolve(process.cwd(),'../')).filter(item =>item.endsWith('.crt'))))
 // console.log(fs.readFileSync(path.resolve(process.cwd(),'../'+fs.readdirSync(path.resolve(process.cwd(),'../')).filter(item =>item.endsWith('.key')))))
 var https = key&&cert?require('https'):null
