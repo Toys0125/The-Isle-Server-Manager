@@ -15,6 +15,8 @@ var credentials = {
 }
 console.log(key,cert,"Key or Cert Are true or null")
 console.log(fs.readdirSync(path.resolve(process.cwd(),'../')).filter(item =>item.endsWith('.pem')&&item.includes("key")))
+console.log(fs.readdirSync(path.resolve(process.cwd(),'../')).filter(item =>item.endsWith('.pem')&&item.includes("key")).length)
+
 console.log(fs.readdirSync(path.resolve(process.cwd(),'../')).filter(item =>item.endsWith('.pem')&&item.includes("key")).length>1?true:false)
 console.log(path.resolve(process.cwd(),'../'+fs.readdirSync(path.resolve(process.cwd(),'../')).filter(item =>item.endsWith('.crt'))))
 // console.log(fs.readFileSync(path.resolve(process.cwd(),'../'+fs.readdirSync(path.resolve(process.cwd(),'../')).filter(item =>item.endsWith('.key')))))
