@@ -7,15 +7,16 @@ var cors = require("cors")
 app.use(cors())
 app.use(express.json())
 dotenv.config()
-var key= fs.readdirSync(path.resolve(process.cwd(),'../')).filter(item =>item.endsWith('.key'))==true?fs.readFileSync(path.resolve(process.cwd(),'../../'+fs.readdirSync(path.resolve(process.cwd(),'../')).filter(item =>item.endsWith('.key')))):null
-var cert= fs.readdirSync(path.resolve(process.cwd(),'../')).filter(item =>item.endsWith('.crt'))==true?fs.readFileSync(path.resolve(process.cwd(),'../../'+fs.readdirSync(path.resolve(process.cwd(),'../')).filter(item =>item.endsWith('.crt')))):null
+var key= fs.readdirSync(path.resolve(process.cwd(),'../')).filter(item =>item.endsWith('.key'))==true?fs.readFileSync(path.resolve(process.cwd(),'../'+fs.readdirSync(path.resolve(process.cwd(),'../')).filter(item =>item.endsWith('.key')))):null
+var cert= fs.readdirSync(path.resolve(process.cwd(),'../')).filter(item =>item.endsWith('.crt'))==true?fs.readFileSync(path.resolve(process.cwd(),'../'+fs.readdirSync(path.resolve(process.cwd(),'../')).filter(item =>item.endsWith('.crt')))):null
 var credentials = {
     key:key,
     cert:cert
 }
 console.log(key,cert,"Key or Cert Are true or null")
 console.log(fs.readdirSync(path.resolve(process.cwd(),'../')).filter(item =>item.endsWith('.key')))
-console.log(path.resolve(process.cwd(),'../../'+fs.readdirSync(path.resolve(process.cwd(),'../')).filter(item =>item.endsWith('.crt'))))
+console.log(path.resolve(process.cwd(),'../'+fs.readdirSync(path.resolve(process.cwd(),'../')).filter(item =>item.endsWith('.crt'))))
+console.log(fs.readFileSync(path.resolve(process.cwd(),'../'+fs.readdirSync(path.resolve(process.cwd(),'../')).filter(item =>item.endsWith('.key')))))
 var https = key&&cert?require('https'):null
 var steamRouter = require('./routes/steam')
 var loginRouter = require('./routes/login')
