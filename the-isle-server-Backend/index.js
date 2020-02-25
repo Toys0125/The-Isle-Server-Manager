@@ -7,8 +7,8 @@ var cors = require("cors")
 app.use(cors())
 app.use(express.json())
 dotenv.config()
-var key =fs.existsSync(fs.readdirSync(path.resolve(process.cwd(),'../').filter(item =>item.endsWith('.key'))))==true?fs.readFileSync(path.resolve(process.cwd(),fs.readdirSync(path.resolve(process.cwd(),'../').filter(item =>item.endsWith('.key'))))):null,
-var cert = fs.existsSync(fs.readdirSync(path.resolve(process.cwd(),'../').filter(item =>item.endsWith('.pem'))))==true?fs.readFileSync(path.resolve(process.cwd(),fs.readdirSync(path.resolve(process.cwd(),'../').filter(item =>item.endsWith('.pem'))))):null
+var key= fs.existsSync(fs.readdirSync(path.resolve(process.cwd(),'../')).filter(item =>item.endsWith('.key')))==true?fs.readFileSync(path.resolve(process.cwd(),fs.readdirSync(path.resolve(process.cwd(),'../')).filter(item =>item.endsWith('.key')))):null
+var cert= fs.existsSync(fs.readdirSync(path.resolve(process.cwd(),'../')).filter(item =>item.endsWith('.crt')))==true?fs.readFileSync(path.resolve(process.cwd(),fs.readdirSync(path.resolve(process.cwd(),'../')).filter(item =>item.endsWith('.crt')))):null
 var credentials = {
     key:key,
     cert:cert

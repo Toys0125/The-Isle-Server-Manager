@@ -97,8 +97,8 @@ export default {
     port: process.env.PORT, // default: 3000
     host: process.env.HOST, // default: localhost
     https:{
-      key: fs.existsSync(fs.readdirSync(path.resolve(process.cwd(),'../').filter(item =>item.endsWith('.key'))))==true?fs.readFileSync(path.resolve(process.cwd(),fs.readdirSync(path.resolve(process.cwd(),'../').filter(item =>item.endsWith('.key'))))):null,
-      cert: fs.existsSync(fs.readdirSync(path.resolve(process.cwd(),'../').filter(item =>item.endsWith('.crt'))))==true?fs.readFileSync(path.resolve(process.cwd(),fs.readdirSync(path.resolve(process.cwd(),'../').filter(item =>item.endsWith('.crt'))))):null
+      key: fs.existsSync(fs.readdirSync(path.resolve(process.cwd(),'../')).filter(item =>item.endsWith('.key')))==true?fs.readFileSync(path.resolve(process.cwd(),fs.readdirSync(path.resolve(process.cwd(),'../')).filter(item =>item.endsWith('.key')))):null,
+      cert: fs.existsSync(fs.readdirSync(path.resolve(process.cwd(),'../')).filter(item =>item.endsWith('.crt')))==true?fs.readFileSync(path.resolve(process.cwd(),fs.readdirSync(path.resolve(process.cwd(),'../')).filter(item =>item.endsWith('.crt')))):null
     }
   },
   vue: {
