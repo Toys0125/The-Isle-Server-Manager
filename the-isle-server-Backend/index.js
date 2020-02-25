@@ -83,7 +83,7 @@ fs.readFile(path.resolve(process.cwd(),"config.cfg"),function(err,contents){
     var path = require('path')
     console.log("Is this the correct path to your saves",path.resolve(process.cwd(),SavePath))
 })
-https!=null?app.listen(process.env.PORT,()=>{
+https==null?app.listen(process.env.PORT,()=>{
     console.log("Server running on port",process.env.PORT)
 }):https.createServer(credentials,app).listen(process.env.PORT,()=>{
     console.log("Server is Running HTTPS on port",process.env.PORT)
