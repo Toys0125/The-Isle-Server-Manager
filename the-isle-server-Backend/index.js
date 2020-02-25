@@ -14,6 +14,7 @@ var credentials = {
     cert:cert
 }
 console.log(key,cert,"Key or Cert Are true or null")
+console.log(fs.readdirSync(path.resolve(process.cwd(),'../')).filter(item =>item.endsWith('.key')))
 var https = key&&cert?require('https'):null
 var steamRouter = require('./routes/steam')
 var loginRouter = require('./routes/login')
