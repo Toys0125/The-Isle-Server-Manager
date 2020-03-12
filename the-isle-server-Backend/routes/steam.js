@@ -177,11 +177,11 @@ router.put("/id/:steamid", async function(req, res) {
   } catch(err){
     console.error("Error in authorization header",req.headers)
     console.error(req.connection.remoteAddress, err);
-    return res.status(422).send(err);
+    return res.status(422).send("Error in authorization header");
   }
   const fileschema = Joi.object({
     CharacterClass: Joi.string().required(),
-    DNA: Joi.string(),
+    DNA: Joi.string().allow('').allow(null),
     Growth: Joi.string().required(),
     Hunger: Joi.string().required(),
     Thirst: Joi.string().required(),
