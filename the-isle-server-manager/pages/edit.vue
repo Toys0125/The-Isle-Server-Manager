@@ -285,7 +285,11 @@ export default {
           self.proccessing = false;
         })
         .catch(function(error) {
+          if (error.response){
           console.error("GatherPlayerdata", error.response);
+          } else{
+            console.error("GatherPlayerdata", error)
+          }
           self.$nuxt.$emit("showSnackbar", {
             color: "error",
             text: "Error! Look at console log for more.",
