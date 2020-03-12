@@ -377,6 +377,7 @@ export default {
       let dataFormat = {
         file: newData
       };
+      var self = this;
       await axios
         .put(
           backendURL + "/steam/id/" + this.selectedSteam.steamid,
