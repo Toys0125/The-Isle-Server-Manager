@@ -172,7 +172,13 @@ router.get("/id/:steamid", async function(req, res) {
 });
 router.put("/id/:steamid", async function(req, res) {
   var data = req.body;
+  try{
   var authorization = JSON.parse(req.headers.authorization)
+  } catch(err){
+    console.error("Error in authorization header",req.headers)
+    console.error(req.connection.remoteAddress, err);
+    return res.status(422).send(err);
+  }
   const fileschema = Joi.object({
     CharacterClass: Joi.string().required(),
     DNA: Joi.string(),
