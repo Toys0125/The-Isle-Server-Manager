@@ -395,7 +395,7 @@ export default {
             timeout: 3000
           });
           setTimeout(2000);
-          valid = true;
+          self.valid = true;
         })
         .catch(function(error) {
           if (error.response)
