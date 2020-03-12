@@ -390,7 +390,7 @@ export default {
         )
         .then(function(response) {
           self.$nuxt.$emit("showSnackbar", {
-            color: "Success",
+            color: "success",
             text: "Player has been updated",
             timeout: 3000
           });
