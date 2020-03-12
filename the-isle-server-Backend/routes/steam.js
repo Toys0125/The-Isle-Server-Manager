@@ -223,6 +223,7 @@ router.put("/id/:steamid", async function(req, res) {
   }
   // console.log(data)
   var steamid = req.params.steamid;
+  console.log("Before Write")
   try {
     file = shared.SaveSteamFile(steamid, data.file);
   } catch (error) {

@@ -15,6 +15,7 @@ module.exports = {
     SaveSteamFile: function (steamid,data){
         try{
             fs.writeFileSync(path.resolve(process.cwd(),SavePath,'./'+steamid+'.json'),JSON.stringify(data))
+            console.log("Write to",steamid,"Completed")
         } catch(error){
             throw error
         }
