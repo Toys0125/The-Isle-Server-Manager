@@ -398,7 +398,11 @@ export default {
           valid = true;
         })
         .catch(function(error) {
+          if (error.response)
           console.error("Error in submiting dino to backend server", error.response);
+          else{
+            console.error("Error with vue or axios",error)
+          }
           self.$nuxt.$emit("showSnackbar", {
             color: "error",
             text: "Error! Look at console log for more.",
