@@ -104,3 +104,5 @@ dist
 .tern-port
 the-isle-server-Backend/login.cfg
 the-isle-server-Backend/config.cfg
+# Https Pem
+*.pem
