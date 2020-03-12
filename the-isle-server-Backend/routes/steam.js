@@ -224,7 +224,7 @@ router.put("/id/:steamid", async function(req, res) {
   // console.log(data)
   var steamid = req.params.steamid;
   try {
-    file = shared.SaveSteamFile(steamid, data);
+    file = shared.SaveSteamFile(steamid, data.file);
   } catch (error) {
     console.error(
       "Error while writing to players file " +
