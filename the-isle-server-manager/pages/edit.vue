@@ -307,8 +307,8 @@ export default {
       this.flipGender();
       this.growth = this.playerData.data.Growth;
       this.health = this.playerData.data.Health;
-      if (this.playerData.data.BleedingRate != 0) {
-        this.playerData.data.BleedingRate = 0;
+      if (this.playerData.data.BleedingRate != "0") {
+        this.playerData.data.BleedingRate = "0";
       }
       this.restingobj.check = this.playerData.data.bIsResting;
       this.flipCheck(["Resting", "Standing"], this.restingobj);
