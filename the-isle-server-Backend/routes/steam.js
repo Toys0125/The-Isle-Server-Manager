@@ -194,7 +194,7 @@ router.put("/id/:steamid", async function(req, res) {
     bBrokenLegs: Joi.boolean().required(),
     ProgressionPoints: Joi.string().required(),
     ProgressionTier: Joi.string().required(),
-    UnlockedCharacters: Joi.string().required().allow(null),
+    UnlockedCharacters: Joi.string().required().allow('').allow(null),
     CameraRotation_Isle_V3: Joi.string(),
     CameraDistance_Isle_V3: Joi.string(),
     SkinPaletteSection1: Joi.number(),
