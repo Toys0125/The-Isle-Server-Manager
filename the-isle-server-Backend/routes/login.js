@@ -172,7 +172,7 @@ router.use(function timeLog(req, res, next) {
     ":" + (date.getMinutes() > 9 ? date.getMinutes() : "0" + date.getMinutes());
   formattedTimer +=
     ":" + (date.getSeconds() > 9 ? date.getSeconds() : "0" + date.getSeconds());
-  console.log(formattedTimer, req.method, req.originalUrl);
+  console.log(formattedTimer,req.connection.remoteAddress, req.method, req.originalUrl);
   /* if (
     req.hostname == process.env.FrontEndHostName
       ? process.env.FrontEndHostName
