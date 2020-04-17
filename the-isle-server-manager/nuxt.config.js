@@ -2,6 +2,7 @@ import colors from 'vuetify/es5/util/colors'
 require('dotenv').config()
 import fs from 'fs'
 import path from 'path'
+var allowHTTPS=fs.readdirSync(path.resolve(process.cwd(),'../')).filter(item =>item.endsWith('.pem')&&item.includes("key")).length>0&&fs.readdirSync(path.resolve(process.cwd(),'../')).filter(item =>item.endsWith('.pem')&&item.includes("crt")).length>0
 export default {
   mode: 'universal',
   /*
@@ -96,10 +97,10 @@ export default {
   server: {
     port: process.env.PORT, // default: 3000
     host: process.env.HOST, // default: localhost
-    https:{
-      key: fs.readdirSync(path.resolve(process.cwd(),'../')).filter(item =>item.endsWith('.pem')&&item.includes("key")).length>0?fs.readFileSync(path.resolve(process.cwd(),'../'+fs.readdirSync(path.resolve(process.cwd(),'../')).filter(item =>item.endsWith('.pem')&&item.includes("key")))):null,
-      cert: fs.readdirSync(path.resolve(process.cwd(),'../')).filter(item =>item.endsWith('.pem')&&item.includes("crt")).length>0?fs.readFileSync(path.resolve(process.cwd(),'../'+fs.readdirSync(path.resolve(process.cwd(),'../')).filter(item =>item.endsWith('.pem')&&item.includes("crt")))):null
-    }
+    https:allowHTTPS?{
+      key: fs.readFileSync(path.resolve(process.cwd(),'../'+fs.readdirSync(path.resolve(process.cwd(),'../')).filter(item =>item.endsWith('.pem')&&item.includes("key")))),
+      cert: fs.readFileSync(path.resolve(process.cwd(),'../'+fs.readdirSync(path.resolve(process.cwd(),'../')).filter(item =>item.endsWith('.pem')&&item.includes("crt"))))
+    }:null
   },
   vue: {
     config: {

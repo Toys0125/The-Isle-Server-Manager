@@ -64,7 +64,7 @@
               <v-text-field v-model="zCords" label="Z Cords" />
             </v-col>
             <v-flex md1>
-              TextField
+              MAP
             </v-flex>
             <v-flex md2>
               <v-checkbox
