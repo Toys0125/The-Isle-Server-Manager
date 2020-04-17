@@ -106,7 +106,10 @@
       </v-form>
     </dir>
     <dir v-else>
-      <p>Not an Management permission</p>
+      <p>Do not have admin powers for the server</p>
+      <router-link
+      to="/edit"
+      />
     </dir>
   </dir>
 </template>
