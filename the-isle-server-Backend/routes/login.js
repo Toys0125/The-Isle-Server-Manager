@@ -67,16 +67,6 @@ async function writeLoginFile() {
   }
 }
 async function Login(username, password, res) {
-  const auth = Joi.object({
-    username: Joi.string().required().max(24),
-    password: Joi.string().required().max(64)
-  });
-  try {
-    await auth.validateAsync(authorization);
-  } catch (err) {
-    console.error(req.connection.remoteAddress, err);
-    return res.status(422).send(err);
-  }
   var stats = {};
   var checked = false;
   if (!process.env.DatabaseModes) {
@@ -223,8 +213,8 @@ router.get("/", async function(req, res) {
 router.post("/", async function(req, res) {
   var data = req.body;
   const schema = Joi.object({
-    username: Joi.string().required(),
-    password: Joi.string().required()
+    username: Joi.string().required().max(24),
+    password: Joi.string().required().max(64)
   });
   try {
     await schema.validateAsync(data);
