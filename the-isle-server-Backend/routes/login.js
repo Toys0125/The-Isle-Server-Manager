@@ -411,7 +411,7 @@ router.post("/verify", async function(req, res) {
       res.json({
         status: "delete"
       });
-      return res.status(200);
+      return res.status(403);
     }
   } else {
     const client = DatabaseConnect();
