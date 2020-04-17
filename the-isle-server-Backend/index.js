@@ -10,28 +10,8 @@ dotenv.config();
 var key = null;
 var cert = null;
 try {
-  key =
-    fs
-      .readdirSync(path.resolve(process.cwd(), "../"))
-      .filter((item) => item.endsWith(".pem") && item.includes("key")).length > 0
-      ? fs.readFileSync(
-          path.resolve(
-            process.cwd(),
-            "../" + fs.readdirSync(path.resolve(process.cwd(), "../")).filter((item) => item.endsWith(".pem") && item.includes("key"))
-          )
-        )
-      : null;
-  cert =
-    fs
-      .readdirSync(path.resolve(process.cwd(), "../"))
-      .filter((item) => item.endsWith(".pem") && item.includes("crt")).length > 0
-      ? fs.readFileSync(
-          path.resolve(
-            process.cwd(),
-            "../" + fs.readdirSync(path.resolve(process.cwd(), "../")).filter((item) => item.endsWith(".pem") && item.includes("crt"))
-          )
-        )
-      : null;
+  key = fs.readdirSync(path.resolve(process.cwd(), "../")).filter((item) => item.endsWith(".pem") && item.includes("key")).length > 0 ? fs.readFileSync(path.resolve(process.cwd(),"../" + fs.readdirSync(path.resolve(process.cwd(), "../")).filter((item) => item.endsWith(".pem") && item.includes("key")))): null;
+  cert = fs.readdirSync(path.resolve(process.cwd(), "../")).filter((item) => item.endsWith(".pem") && item.includes("crt")).length > 0 ? fs.readFileSync(path.resolve(process.cwd(),"../" + fs.readdirSync(path.resolve(process.cwd(), "../")).filter((item) => item.endsWith(".pem") && item.includes("crt")))): null;
 } catch (error) {
   console.error(error);
 }
@@ -126,7 +106,7 @@ fs.readFile(path.resolve(process.cwd(), "config.cfg"), function (
     path.resolve(process.cwd(), SavePath)
   );
 });
-https.cert == null || https.key == null
+https==null
   ? app.listen(process.env.PORT, () => {
       console.log("Server running on port", process.env.PORT);
     })
