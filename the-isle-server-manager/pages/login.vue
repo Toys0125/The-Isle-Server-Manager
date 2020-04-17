@@ -84,12 +84,12 @@ export default {
             self.proccessing = false; //Give the user the ability to use the button
           })
           .catch(function(error) {
-            self.$nuxt.$emit("showSnackbar", {
+            if (error.response) {
+              self.$nuxt.$emit("showSnackbar", {
               color: "error",
-              text: "Error! Look at console log for more.",
+              text: "Error! Incorrect Login",
               timeout: 3000
             });
-            if (error.response) {
               if ((error.response.status = 401)) {
                 console.error(error.response.data);
                 self.error = error.response.data;
@@ -105,6 +105,11 @@ export default {
               setTimeout(5000);
               self.proccessing = false;
             } else {
+              self.$nuxt.$emit("showSnackbar", {
+              color: "error",
+              text: "Error! Check Console Log",
+              timeout: 3000
+            });
               console.error(error);
               setTimeout(5000);
               self.proccessing = false;

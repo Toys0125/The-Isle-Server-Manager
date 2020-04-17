@@ -67,6 +67,16 @@ async function writeLoginFile() {
   }
 }
 async function Login(username, password, res) {
+  const auth = Joi.object({
+    username: Joi.string().required().max(24),
+    password: Joi.string().required().max(64)
+  });
+  try {
+    await auth.validateAsync(authorization);
+  } catch (err) {
+    console.error(req.connection.remoteAddress, err);
+    return res.status(422).send(err);
+  }
   var stats = {};
   var checked = false;
   if (!process.env.DatabaseModes) {
