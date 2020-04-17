@@ -367,7 +367,7 @@ router.post("/user", async function(req, res) {
 router.post("/verify", async function(req, res) {
   var data = req.body;
   const schema = Joi.object({
-    username: Joi.string().required(),
+    username: Joi.string().required().max(24),
     hash: Joi.string().required()
   });
   try {
