@@ -285,10 +285,10 @@ export default {
           self.proccessing = false;
         })
         .catch(function(error) {
-          if (error.response){
-          console.error("GatherPlayerdata", error.response);
-          } else{
-            console.error("GatherPlayerdata", error)
+          if (error.response) {
+            console.error("GatherPlayerdata", error.response);
+          } else {
+            console.error("GatherPlayerdata", error);
           }
           self.$nuxt.$emit("showSnackbar", {
             color: "error",
@@ -314,7 +314,11 @@ export default {
       this.flipCheck(["Resting", "Standing"], this.restingobj);
       this.brokenlegobj.check = this.playerData.data.bBrokenLegs;
       this.flipCheck(["Broken", "Not Broken"], this.brokenlegobj);
-      var cords = this.playerData.data.Location_Isle_V3.split(" ");
+      if (this.playerData.data.Location_Isle_V3) {
+        var cords = this.playerData.data.Location_Isle_V3.split(" ");
+      } else if (this.playerData.data.Location_Thenyaw_Island) {
+        var cords = this.playerData.data.Location_Thenyaw_Island.split(" ");
+      }
       this.xCords = cords[0].split("=")[1];
       this.yCords = cords[1].split("=")[1];
       this.zCords = cords[2].split("=")[1];
@@ -399,9 +403,12 @@ export default {
         })
         .catch(function(error) {
           if (error.response)
-          console.error("Error in submiting dino to backend server", error.response);
-          else{
-            console.error("Error with vue or axios",error)
+            console.error(
+              "Error in submiting dino to backend server",
+              error.response
+            );
+          else {
+            console.error("Error with vue or axios", error);
           }
           self.$nuxt.$emit("showSnackbar", {
             color: "error",
